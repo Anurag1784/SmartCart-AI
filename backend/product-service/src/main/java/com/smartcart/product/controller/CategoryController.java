@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.smartcart.product.entity.Category;
 import com.smartcart.product.service.CategoryService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {
@@ -26,14 +28,22 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+    // =========================================================
+    // CREATE CATEGORY
+    // =========================================================
+
     @PostMapping
     public ResponseEntity<Category> createCategory(
-            @RequestBody Category category) {
+            @Valid @RequestBody Category category) {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(categoryService.createCategory(category));
     }
+
+    // =========================================================
+    // GET ALL CATEGORIES
+    // =========================================================
 
     @GetMapping
     public ResponseEntity<List<Category>> getAllCategories() {
@@ -41,6 +51,10 @@ public class CategoryController {
         return ResponseEntity.ok(
                 categoryService.getAllCategories());
     }
+
+    // =========================================================
+    // GET CATEGORY BY ID
+    // =========================================================
 
     @GetMapping("/{categoryId}")
     public ResponseEntity<Category> getCategoryById(
@@ -50,16 +64,24 @@ public class CategoryController {
                 categoryService.getCategoryById(categoryId));
     }
 
+    // =========================================================
+    // UPDATE CATEGORY
+    // =========================================================
+
     @PutMapping("/{categoryId}")
     public ResponseEntity<Category> updateCategory(
             @PathVariable Long categoryId,
-            @RequestBody Category category) {
+            @Valid @RequestBody Category category) {
 
         return ResponseEntity.ok(
                 categoryService.updateCategory(
                         categoryId,
                         category));
     }
+
+    // =========================================================
+    // DELETE CATEGORY
+    // =========================================================
 
     @DeleteMapping("/{categoryId}")
     public ResponseEntity<Void> deleteCategory(

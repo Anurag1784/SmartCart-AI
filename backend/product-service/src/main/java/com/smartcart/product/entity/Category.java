@@ -8,6 +8,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "categories")
@@ -18,9 +20,22 @@ public class Category {
     @Column(name = "category_id")
     private Long categoryId;
 
-    @Column(name = "category_name", length = 100, nullable = false)
+    @NotBlank(message = "Category name is required")
+    @Size(
+        max = 100,
+        message = "Category name must not exceed 100 characters"
+    )
+    @Column(
+        name = "category_name",
+        length = 100,
+        nullable = false
+    )
     private String categoryName;
 
+    @Size(
+        max = 500,
+        message = "Description must not exceed 500 characters"
+    )
     @Column(name = "description", length = 500)
     private String description;
 

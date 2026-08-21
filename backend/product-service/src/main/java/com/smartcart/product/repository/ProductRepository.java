@@ -1,5 +1,7 @@
 package com.smartcart.product.repository;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +17,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     boolean existsBySku(String sku);
 
     boolean existsByProductName(String productName);
+
+    List<Product> findByProductNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+            String productName,
+            String description);
+
+    List<Product> findByPriceBetween(
+            BigDecimal minPrice,
+            BigDecimal maxPrice);
 }

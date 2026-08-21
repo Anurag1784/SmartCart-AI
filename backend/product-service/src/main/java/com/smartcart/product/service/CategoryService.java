@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.smartcart.product.entity.Category;
+import com.smartcart.product.exception.CategoryNotFoundException;
 import com.smartcart.product.repository.CategoryRepository;
 
 @Service
@@ -16,6 +17,10 @@ public class CategoryService {
     public CategoryService(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
+
+    // =========================================================
+    // CREATE CATEGORY
+    // =========================================================
 
     public Category createCategory(Category category) {
 
@@ -32,18 +37,31 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
+    // =========================================================
+    // GET ALL CATEGORIES
+    // =========================================================
+
     public List<Category> getAllCategories() {
+
         return categoryRepository.findAll();
     }
+
+    // =========================================================
+    // GET CATEGORY BY ID
+    // =========================================================
 
     public Category getCategoryById(Long categoryId) {
 
         return categoryRepository.findById(categoryId)
                 .orElseThrow(() ->
-                        new RuntimeException(
+                        new CategoryNotFoundException(
                                 "Category not found with ID: "
                                         + categoryId));
     }
+
+    // =========================================================
+    // UPDATE CATEGORY
+    // =========================================================
 
     public Category updateCategory(
             Long categoryId,
@@ -51,6 +69,17 @@ public class CategoryService {
 
         Category existingCategory =
                 getCategoryById(categoryId);
+
+        if (!existingCategory.getCategoryName()
+                .equalsIgnoreCase(
+                        updatedCategory.getCategoryName())
+                && categoryRepository.existsByCategoryName(
+                        updatedCategory.getCategoryName())) {
+
+            throw new RuntimeException(
+                    "Category already exists: "
+                            + updatedCategory.getCategoryName());
+        }
 
         existingCategory.setCategoryName(
                 updatedCategory.getCategoryName());
@@ -61,9 +90,14 @@ public class CategoryService {
         return categoryRepository.save(existingCategory);
     }
 
+    // =========================================================
+    // DELETE CATEGORY
+    // =========================================================
+
     public void deleteCategory(Long categoryId) {
 
-        Category category = getCategoryById(categoryId);
+        Category category =
+                getCategoryById(categoryId);
 
         categoryRepository.delete(category);
     }
