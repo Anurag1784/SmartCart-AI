@@ -6,53 +6,35 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- =========================================================
-         SPRING BOOT
-         ========================================================= -->
-
     <parent>
-
         <groupId>org.springframework.boot</groupId>
-
         <artifactId>spring-boot-starter-parent</artifactId>
-
-        <version>4.1.0</version>
-
+        <version>4.1.1</version>
         <relativePath/>
-
     </parent>
-
-
-    <!-- =========================================================
-         PROJECT INFORMATION
-         ========================================================= -->
 
     <groupId>com.smartcart</groupId>
 
-    <artifactId>product-service</artifactId>
+    <artifactId>inventory-service</artifactId>
 
     <version>0.0.1-SNAPSHOT</version>
 
-    <name>product-service</name>
+    <name>inventory-service</name>
 
-    <description>SmartCart AI Product Service</description>
-
-
-    <!-- =========================================================
-         PROPERTIES
-         ========================================================= -->
+    <description>SmartCart AI Inventory Service</description>
 
     <properties>
 
         <java.version>21</java.version>
 
+        <jjwt.version>0.12.6</jjwt.version>
+
         <spring-cloud.version>2025.1.2</spring-cloud.version>
 
     </properties>
 
-
     <!-- =========================================================
-         SPRING CLOUD BOM
+         SPRING CLOUD DEPENDENCY MANAGEMENT
          ========================================================= -->
 
     <dependencyManagement>
@@ -78,12 +60,7 @@
     </dependencyManagement>
 
 
-    <!-- =========================================================
-         DEPENDENCIES
-         ========================================================= -->
-
     <dependencies>
-
 
         <!-- =====================================================
              SPRING DATA JPA
@@ -190,7 +167,7 @@
 
             <artifactId>jjwt-api</artifactId>
 
-            <version>0.12.6</version>
+            <version>${jjwt.version}</version>
 
         </dependency>
 
@@ -205,7 +182,7 @@
 
             <artifactId>jjwt-impl</artifactId>
 
-            <version>0.12.6</version>
+            <version>${jjwt.version}</version>
 
             <scope>runtime</scope>
 
@@ -213,7 +190,7 @@
 
 
         <!-- =====================================================
-             JWT JACKSON
+             JWT JACKSON JSON SUPPORT
              ===================================================== -->
 
         <dependency>
@@ -222,7 +199,7 @@
 
             <artifactId>jjwt-jackson</artifactId>
 
-            <version>0.12.6</version>
+            <version>${jjwt.version}</version>
 
             <scope>runtime</scope>
 
@@ -230,7 +207,7 @@
 
 
         <!-- =====================================================
-             TESTING - JPA
+             TESTING
              ===================================================== -->
 
         <dependency>
@@ -244,10 +221,6 @@
         </dependency>
 
 
-        <!-- =====================================================
-             TESTING - SECURITY
-             ===================================================== -->
-
         <dependency>
 
             <groupId>org.springframework.boot</groupId>
@@ -258,10 +231,6 @@
 
         </dependency>
 
-
-        <!-- =====================================================
-             TESTING - VALIDATION
-             ===================================================== -->
 
         <dependency>
 
@@ -274,10 +243,6 @@
         </dependency>
 
 
-        <!-- =====================================================
-             TESTING - WEB
-             ===================================================== -->
-
         <dependency>
 
             <groupId>org.springframework.boot</groupId>
@@ -287,7 +252,6 @@
             <scope>test</scope>
 
         </dependency>
-
 
     </dependencies>
 
@@ -300,11 +264,6 @@
 
         <plugins>
 
-
-            <!-- =================================================
-                 SPRING BOOT MAVEN PLUGIN
-                 ================================================= -->
-
             <plugin>
 
                 <groupId>org.springframework.boot</groupId>
@@ -314,10 +273,6 @@
             </plugin>
 
 
-            <!-- =================================================
-                 MAVEN COMPILER
-                 ================================================= -->
-
             <plugin>
 
                 <groupId>org.apache.maven.plugins</groupId>
@@ -325,11 +280,6 @@
                 <artifactId>maven-compiler-plugin</artifactId>
 
                 <executions>
-
-
-                    <!-- =========================================
-                         MAIN COMPILE
-                         ========================================= -->
 
                     <execution>
 
@@ -362,10 +312,6 @@
                     </execution>
 
 
-                    <!-- =========================================
-                         TEST COMPILE
-                         ========================================= -->
-
                     <execution>
 
                         <id>default-testCompile</id>
@@ -396,11 +342,9 @@
 
                     </execution>
 
-
                 </executions>
 
             </plugin>
-
 
         </plugins>
 

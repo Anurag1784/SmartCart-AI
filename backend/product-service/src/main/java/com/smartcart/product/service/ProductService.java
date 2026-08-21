@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.smartcart.product.client.InventoryClient;
 import com.smartcart.product.entity.Category;
 import com.smartcart.product.entity.Product;
 import com.smartcart.product.exception.CategoryNotFoundException;
@@ -19,13 +20,16 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final InventoryClient inventoryClient;
 
     public ProductService(
             ProductRepository productRepository,
-            CategoryRepository categoryRepository) {
+            CategoryRepository categoryRepository,
+            InventoryClient inventoryClient) {
 
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
+        this.inventoryClient = inventoryClient;
     }
 
     // =========================================================
@@ -268,5 +272,22 @@ public class ProductService {
         }
 
         return filteredProducts;
+    }
+
+    // =========================================================
+    // CHECK INVENTORY AVAILABILITY
+    // =========================================================
+
+    public boolean checkInventoryAvailability(
+            Long productId,
+            Integer quantity) {
+
+        // First verify that the product exists
+        getProductById(productId);
+
+        // Call Inventory-Service through Feign Client
+        return inventoryClient.checkAvailability(
+                productId,
+                quantity);
     }
 }

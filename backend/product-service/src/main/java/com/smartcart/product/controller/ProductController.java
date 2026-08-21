@@ -111,6 +111,23 @@ public class ProductController {
     }
 
     // =========================================================
+    // CHECK INVENTORY AVAILABILITY
+    // =========================================================
+
+    @GetMapping("/{productId}/availability")
+    public ResponseEntity<Boolean> checkInventoryAvailability(
+
+            @PathVariable Long productId,
+
+            @RequestParam Integer quantity) {
+
+        return ResponseEntity.ok(
+                productService.checkInventoryAvailability(
+                        productId,
+                        quantity));
+    }
+
+    // =========================================================
     // UPDATE PRODUCT
     // =========================================================
 
