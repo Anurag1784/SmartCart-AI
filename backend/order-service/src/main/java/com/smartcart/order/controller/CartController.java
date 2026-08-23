@@ -19,6 +19,7 @@ public class CartController {
         this.cartService = cartService;
     }
 
+    // Get cart for customer
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<Cart> getCart(
             @PathVariable Long customerId) {
@@ -28,6 +29,7 @@ public class CartController {
         );
     }
 
+    // Get all items in customer's cart
     @GetMapping("/customer/{customerId}/items")
     public ResponseEntity<List<CartItem>> getCartItems(
             @PathVariable Long customerId) {
@@ -37,6 +39,7 @@ public class CartController {
         );
     }
 
+    // Add item to customer's cart
     @PostMapping("/customer/{customerId}/items")
     public ResponseEntity<CartItem> addItem(
             @PathVariable Long customerId,
@@ -50,6 +53,7 @@ public class CartController {
                 .body(savedItem);
     }
 
+    // Update cart item quantity
     @PutMapping("/customer/{customerId}/items/{productId}")
     public ResponseEntity<CartItem> updateItem(
             @PathVariable Long customerId,
@@ -65,6 +69,7 @@ public class CartController {
         );
     }
 
+    // Remove one item
     @DeleteMapping("/customer/{customerId}/items/{productId}")
     public ResponseEntity<Void> removeItem(
             @PathVariable Long customerId,
@@ -75,6 +80,7 @@ public class CartController {
         return ResponseEntity.noContent().build();
     }
 
+    // Clear entire cart
     @DeleteMapping("/customer/{customerId}/items")
     public ResponseEntity<Void> clearCart(
             @PathVariable Long customerId) {

@@ -1,5 +1,6 @@
 package com.smartcart.order.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,6 +33,7 @@ public class CartItem {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "cart_id", nullable = false)
+    @JsonBackReference
     private Cart cart;
 
     @Column(name = "product_id", nullable = false)
@@ -45,4 +47,11 @@ public class CartItem {
 
     @Column(name = "added_at", nullable = false)
     private LocalDateTime addedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        if (addedAt == null) {
+            addedAt = LocalDateTime.now();
+        }
+    }
 }

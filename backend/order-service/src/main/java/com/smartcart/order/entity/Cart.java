@@ -1,5 +1,6 @@
 package com.smartcart.order.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,5 +38,6 @@ public class Cart {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    @JsonManagedReference
     private List<CartItem> cartItems = new ArrayList<>();
 }

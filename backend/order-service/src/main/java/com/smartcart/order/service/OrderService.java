@@ -6,8 +6,10 @@ import com.smartcart.order.feign.InventoryClient;
 import com.smartcart.order.feign.ProductClient;
 import com.smartcart.order.repository.OrderItemRepository;
 import com.smartcart.order.repository.OrderRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,11 +20,8 @@ import java.util.List;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-
     private final OrderItemRepository orderItemRepository;
-
     private final ProductClient productClient;
-
     private final InventoryClient inventoryClient;
 
     public OrderService(
@@ -32,11 +31,8 @@ public class OrderService {
             InventoryClient inventoryClient) {
 
         this.orderRepository = orderRepository;
-
         this.orderItemRepository = orderItemRepository;
-
         this.productClient = productClient;
-
         this.inventoryClient = inventoryClient;
     }
 
@@ -50,14 +46,12 @@ public class OrderService {
             List<OrderItem> orderItems) {
 
         if (orderItems == null || orderItems.isEmpty()) {
-
             throw new RuntimeException(
                     "Order must contain at least one item"
             );
         }
 
         BigDecimal totalAmount = BigDecimal.ZERO;
-
         List<OrderItem> preparedItems = new ArrayList<>();
 
         // =====================================================
@@ -67,7 +61,6 @@ public class OrderService {
         for (OrderItem item : orderItems) {
 
             if (item.getProductId() == null) {
-
                 throw new RuntimeException(
                         "Product ID is required"
                 );
@@ -108,7 +101,6 @@ public class OrderService {
                     );
 
             if (!Boolean.TRUE.equals(available)) {
-
                 throw new RuntimeException(
                         "Insufficient stock for product ID: "
                                 + item.getProductId()
@@ -148,15 +140,13 @@ public class OrderService {
         // SET ORDER INFORMATION
         // =====================================================
 
+        LocalDateTime now = LocalDateTime.now();
+
         order.setTotalAmount(totalAmount);
-
         order.setOrderStatus("PENDING_PAYMENT");
-
         order.setPaymentStatus("PENDING");
-
-        order.setCreatedAt(LocalDateTime.now());
-
-        order.setUpdatedAt(LocalDateTime.now());
+        order.setCreatedAt(now);
+        order.setUpdatedAt(now);
 
         // =====================================================
         // SAVE ORDER
@@ -232,6 +222,195 @@ public class OrderService {
     }
 
     // =========================================================
+    // UPDATE ORDER STATUS
+    // =========================================================
+
+    @Transactional
+    public Order updateOrderStatus(
+            Long orderId,
+            String newStatus) {
+
+        Order order = getOrderById(orderId);
+
+        String currentStatus = order.getOrderStatus();
+
+        // =====================================================
+        // VALIDATE CURRENT STATUS
+        // =====================================================
+
+        if (currentStatus == null ||
+                currentStatus.trim().isEmpty()) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Current order status is missing"
+            );
+        }
+
+        currentStatus = currentStatus.trim().toUpperCase();
+
+        // =====================================================
+        // VALIDATE NEW STATUS
+        // =====================================================
+
+        if (newStatus == null ||
+                newStatus.trim().isEmpty()) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Order status is required"
+            );
+        }
+
+        newStatus = newStatus.trim().toUpperCase();
+
+        // =====================================================
+        // DO NOT UPDATE TO SAME STATUS
+        // =====================================================
+
+        if (currentStatus.equals(newStatus)) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Order is already in status: "
+                            + currentStatus
+            );
+        }
+
+        // =====================================================
+        // CANCELLED ORDER CANNOT BE UPDATED
+        // =====================================================
+
+        if ("CANCELLED".equals(currentStatus)) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Cancelled order cannot be updated"
+            );
+        }
+
+        // =====================================================
+        // COMPLETED ORDER CANNOT BE UPDATED
+        // =====================================================
+
+        if ("COMPLETED".equals(currentStatus)) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Completed order cannot be updated"
+            );
+        }
+
+        // =====================================================
+        // VALID ORDER STATUS TRANSITIONS
+        // =====================================================
+
+        boolean validTransition = false;
+
+        switch (currentStatus) {
+
+            // -------------------------------------------------
+            // PENDING_PAYMENT -> CONFIRMED
+            // -------------------------------------------------
+
+            case "PENDING_PAYMENT":
+
+                if ("CONFIRMED".equals(newStatus)) {
+                    validTransition = true;
+                }
+
+                break;
+
+            // -------------------------------------------------
+            // CONFIRMED -> PROCESSING
+            // -------------------------------------------------
+
+            case "CONFIRMED":
+
+                if ("PROCESSING".equals(newStatus)) {
+                    validTransition = true;
+                }
+
+                break;
+
+            // -------------------------------------------------
+            // PROCESSING -> SHIPPED
+            // -------------------------------------------------
+
+            case "PROCESSING":
+
+                if ("SHIPPED".equals(newStatus)) {
+                    validTransition = true;
+                }
+
+                break;
+
+            // -------------------------------------------------
+            // SHIPPED -> DELIVERED
+            // -------------------------------------------------
+
+            case "SHIPPED":
+
+                if ("DELIVERED".equals(newStatus)) {
+                    validTransition = true;
+                }
+
+                break;
+
+            // -------------------------------------------------
+            // DELIVERED -> COMPLETED
+            // -------------------------------------------------
+
+            case "DELIVERED":
+
+                if ("COMPLETED".equals(newStatus)) {
+                    validTransition = true;
+                }
+
+                break;
+
+            // -------------------------------------------------
+            // UNKNOWN CURRENT STATUS
+            // -------------------------------------------------
+
+            default:
+
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Invalid current order status: "
+                                + currentStatus
+                );
+        }
+
+        // =====================================================
+        // INVALID STATUS TRANSITION
+        // =====================================================
+
+        if (!validTransition) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Invalid order status transition: "
+                            + currentStatus
+                            + " -> "
+                            + newStatus
+            );
+        }
+
+        // =====================================================
+        // UPDATE STATUS
+        // =====================================================
+
+        order.setOrderStatus(newStatus);
+
+        order.setUpdatedAt(
+                LocalDateTime.now()
+        );
+
+        return orderRepository.save(order);
+    }
+
+    // =========================================================
     // CANCEL ORDER
     // =========================================================
 
@@ -240,10 +419,41 @@ public class OrderService {
 
         Order order = getOrderById(orderId);
 
-        if ("CANCELLED".equals(order.getOrderStatus())) {
+        String currentStatus = order.getOrderStatus();
 
-            throw new RuntimeException(
+        // =====================================================
+        // ALREADY CANCELLED
+        // =====================================================
+
+        if ("CANCELLED".equals(currentStatus)) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
                     "Order is already cancelled"
+            );
+        }
+
+        // =====================================================
+        // COMPLETED ORDER CANNOT BE CANCELLED
+        // =====================================================
+
+        if ("COMPLETED".equals(currentStatus)) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Completed order cannot be cancelled"
+            );
+        }
+
+        // =====================================================
+        // DELIVERED ORDER CANNOT BE CANCELLED
+        // =====================================================
+
+        if ("DELIVERED".equals(currentStatus)) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Delivered order cannot be cancelled"
             );
         }
 
