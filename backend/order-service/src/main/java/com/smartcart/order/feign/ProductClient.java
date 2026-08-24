@@ -1,5 +1,6 @@
 package com.smartcart.order.feign;
 
+import com.smartcart.order.dto.ProductResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface ProductClient {
 
     @GetMapping("/api/products/{productId}")
-    Object getProductById(
+    ProductResponse getProductById(
             @PathVariable("productId") Long productId
     );
 

@@ -1,5 +1,6 @@
 package com.smartcart.order.service;
 
+import com.smartcart.order.dto.ProductResponse;
 import com.smartcart.order.entity.Order;
 import com.smartcart.order.entity.OrderItem;
 import com.smartcart.order.feign.InventoryClient;
@@ -20,8 +21,11 @@ import java.util.List;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+
     private final OrderItemRepository orderItemRepository;
+
     private final ProductClient productClient;
+
     private final InventoryClient inventoryClient;
 
     public OrderService(
@@ -45,93 +49,269 @@ public class OrderService {
             Order order,
             List<OrderItem> orderItems) {
 
+        // =====================================================
+        // VALIDATE ORDER
+        // =====================================================
+
+        if (order == null) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Order information is required"
+            );
+        }
+
+        // =====================================================
+        // VALIDATE CUSTOMER
+        // =====================================================
+
+        if (order.getCustomerId() == null) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Customer ID is required"
+            );
+        }
+
+        // =====================================================
+        // VALIDATE ADDRESS
+        // =====================================================
+
+        if (order.getAddress() == null ||
+                order.getAddress().getAddressId() == null) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Address ID is required"
+            );
+        }
+
+        // =====================================================
+        // VALIDATE ORDER ITEMS
+        // =====================================================
+
         if (orderItems == null || orderItems.isEmpty()) {
-            throw new RuntimeException(
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
                     "Order must contain at least one item"
             );
         }
 
         BigDecimal totalAmount = BigDecimal.ZERO;
+
         List<OrderItem> preparedItems = new ArrayList<>();
 
         // =====================================================
-        // VALIDATE PRODUCTS + CHECK + RESERVE INVENTORY
+        // PROCESS EACH ORDER ITEM
         // =====================================================
 
         for (OrderItem item : orderItems) {
 
+            // =================================================
+            // VALIDATE ORDER ITEM
+            // =================================================
+
+            if (item == null) {
+
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Order item cannot be null"
+                );
+            }
+
+            // =================================================
+            // VALIDATE PRODUCT ID
+            // =================================================
+
             if (item.getProductId() == null) {
-                throw new RuntimeException(
+
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
                         "Product ID is required"
                 );
             }
 
+            // =================================================
+            // VALIDATE QUANTITY
+            // =================================================
+
             if (item.getQuantity() == null ||
                     item.getQuantity() <= 0) {
 
-                throw new RuntimeException(
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
                         "Quantity must be greater than 0"
                 );
             }
 
-            if (item.getUnitPrice() == null ||
-                    item.getUnitPrice().compareTo(BigDecimal.ZERO) < 0) {
+            // =================================================
+            // GET PRODUCT FROM PRODUCT SERVICE
+            // =================================================
 
-                throw new RuntimeException(
-                        "Unit price must be valid"
+            ProductResponse product =
+                    productClient.getProductById(
+                            item.getProductId()
+                    );
+
+            // =================================================
+            // PRODUCT NOT FOUND
+            // =================================================
+
+            if (product == null) {
+
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Product not found with ID: "
+                                + item.getProductId()
                 );
             }
 
             // =================================================
-            // 1. VERIFY PRODUCT EXISTS
+            // VERIFY SELLER ID
             // =================================================
 
-            productClient.getProductById(
-                    item.getProductId()
+            if (product.getSellerId() == null) {
+
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Seller ID is missing for product: "
+                                + item.getProductId()
+                );
+            }
+
+            // =================================================
+            // VERIFY PRODUCT PRICE
+            // =================================================
+
+            if (product.getPrice() == null ||
+                    product.getPrice()
+                            .compareTo(BigDecimal.ZERO) <= 0) {
+
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Product price is invalid for product ID: "
+                                + item.getProductId()
+                );
+            }
+
+            // =================================================
+            // VERIFY PRODUCT STATUS
+            // =================================================
+
+            if (product.getStatus() == null ||
+                    !product.getStatus()
+                            .trim()
+                            .equalsIgnoreCase("ACTIVE")) {
+
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Product is not active for product ID: "
+                                + item.getProductId()
+                );
+            }
+
+            // =================================================
+            // SET SELLER ID FROM PRODUCT SERVICE
+            // =================================================
+
+            item.setSellerId(
+                    product.getSellerId()
             );
 
             // =================================================
-            // 2. CHECK INVENTORY AVAILABILITY
+            // SET UNIT PRICE FROM PRODUCT SERVICE
             // =================================================
 
-            Boolean available =
-                    inventoryClient.checkAvailability(
-                            item.getProductId(),
-                            item.getQuantity()
-                    );
+            // Product Service is the source of truth
+            // for product price.
+
+            BigDecimal unitPrice =
+                    product.getPrice();
+
+            item.setUnitPrice(unitPrice);
+
+            // =================================================
+            // CHECK INVENTORY AVAILABILITY
+            // =================================================
+
+            Boolean available;
+
+            try {
+
+                available =
+                        inventoryClient.checkAvailability(
+                                item.getProductId(),
+                                item.getQuantity()
+                        );
+
+            } catch (Exception exception) {
+
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Unable to check inventory for product ID: "
+                                + item.getProductId(),
+                        exception
+                );
+            }
+
+            // =================================================
+            // STOCK NOT AVAILABLE
+            // =================================================
 
             if (!Boolean.TRUE.equals(available)) {
-                throw new RuntimeException(
+
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
                         "Insufficient stock for product ID: "
                                 + item.getProductId()
                 );
             }
 
             // =================================================
-            // 3. RESERVE INVENTORY
+            // RESERVE INVENTORY
             // =================================================
 
-            inventoryClient.reserveStock(
-                    item.getProductId(),
-                    item.getQuantity()
-            );
+            try {
+
+                inventoryClient.reserveStock(
+                        item.getProductId(),
+                        item.getQuantity()
+                );
+
+            } catch (Exception exception) {
+
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Unable to reserve stock for product ID: "
+                                + item.getProductId(),
+                        exception
+                );
+            }
 
             // =================================================
-            // 4. CALCULATE SUBTOTAL
+            // CALCULATE SUBTOTAL
             // =================================================
 
             BigDecimal subtotal =
-                    item.getUnitPrice()
-                            .multiply(
-                                    BigDecimal.valueOf(
-                                            item.getQuantity()
-                                    )
-                            );
+                    unitPrice.multiply(
+                            BigDecimal.valueOf(
+                                    item.getQuantity()
+                            )
+                    );
 
             item.setSubtotal(subtotal);
 
+            // =================================================
+            // ADD TO TOTAL ORDER AMOUNT
+            // =================================================
+
             totalAmount =
                     totalAmount.add(subtotal);
+
+            // =================================================
+            // ADD PREPARED ITEM
+            // =================================================
 
             preparedItems.add(item);
         }
@@ -140,13 +320,28 @@ public class OrderService {
         // SET ORDER INFORMATION
         // =====================================================
 
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now =
+                LocalDateTime.now();
 
-        order.setTotalAmount(totalAmount);
-        order.setOrderStatus("PENDING_PAYMENT");
-        order.setPaymentStatus("PENDING");
-        order.setCreatedAt(now);
-        order.setUpdatedAt(now);
+        order.setTotalAmount(
+                totalAmount
+        );
+
+        order.setOrderStatus(
+                "PENDING_PAYMENT"
+        );
+
+        order.setPaymentStatus(
+                "PENDING"
+        );
+
+        order.setCreatedAt(
+                now
+        );
+
+        order.setUpdatedAt(
+                now
+        );
 
         // =====================================================
         // SAVE ORDER
@@ -161,12 +356,22 @@ public class OrderService {
 
         for (OrderItem item : preparedItems) {
 
-            item.setOrder(savedOrder);
+            item.setOrder(
+                    savedOrder
+            );
 
-            orderItemRepository.save(item);
+            orderItemRepository.save(
+                    item
+            );
         }
 
-        savedOrder.setOrderItems(preparedItems);
+        // =====================================================
+        // SET ORDER ITEMS
+        // =====================================================
+
+        savedOrder.setOrderItems(
+                preparedItems
+        );
 
         return savedOrder;
     }
@@ -175,14 +380,26 @@ public class OrderService {
     // GET ORDER BY ID
     // =========================================================
 
-    public Order getOrderById(Long orderId) {
+    public Order getOrderById(
+            Long orderId) {
 
-        return orderRepository.findById(orderId)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Order not found"
-                        )
-                );
+        if (orderId == null) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Order ID is required"
+            );
+        }
+
+        return orderRepository.findById(
+                orderId
+        ).orElseThrow(() ->
+                new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Order not found with ID: "
+                                + orderId
+                )
+        );
     }
 
     // =========================================================
@@ -191,6 +408,14 @@ public class OrderService {
 
     public List<Order> getOrdersByCustomerId(
             Long customerId) {
+
+        if (customerId == null) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Customer ID is required"
+            );
+        }
 
         return orderRepository.findByCustomerId(
                 customerId
@@ -204,8 +429,17 @@ public class OrderService {
     public List<Order> getOrdersByStatus(
             String orderStatus) {
 
+        if (orderStatus == null ||
+                orderStatus.trim().isEmpty()) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Order status is required"
+            );
+        }
+
         return orderRepository.findByOrderStatus(
-                orderStatus
+                orderStatus.trim().toUpperCase()
         );
     }
 
@@ -216,8 +450,187 @@ public class OrderService {
     public List<Order> getOrdersByPaymentStatus(
             String paymentStatus) {
 
+        if (paymentStatus == null ||
+                paymentStatus.trim().isEmpty()) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Payment status is required"
+            );
+        }
+
         return orderRepository.findByPaymentStatus(
-                paymentStatus
+                paymentStatus.trim().toUpperCase()
+        );
+    }
+
+    // =========================================================
+    // UPDATE PAYMENT STATUS
+    // =========================================================
+
+    @Transactional
+    public Order updatePaymentStatus(
+            Long orderId,
+            String newPaymentStatus) {
+
+        Order order =
+                getOrderById(orderId);
+
+        // =====================================================
+        // VALIDATE PAYMENT STATUS
+        // =====================================================
+
+        if (newPaymentStatus == null ||
+                newPaymentStatus.trim().isEmpty()) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Payment status is required"
+            );
+        }
+
+        newPaymentStatus =
+                newPaymentStatus
+                        .trim()
+                        .toUpperCase();
+
+        // =====================================================
+        // ALLOWED PAYMENT STATUSES
+        // =====================================================
+
+        if (!"PENDING".equals(newPaymentStatus) &&
+                !"SUCCESS".equals(newPaymentStatus) &&
+                !"FAILED".equals(newPaymentStatus) &&
+                !"REFUNDED".equals(newPaymentStatus)) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Invalid payment status: "
+                            + newPaymentStatus
+            );
+        }
+
+        // =====================================================
+        // CANCELLED ORDER
+        // =====================================================
+
+        if ("CANCELLED".equalsIgnoreCase(
+                order.getOrderStatus()
+        )) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Cancelled order payment status cannot be updated"
+            );
+        }
+
+        // =====================================================
+        // DO NOT UPDATE TO SAME PAYMENT STATUS
+        // =====================================================
+
+        String currentPaymentStatus =
+                order.getPaymentStatus();
+
+        if (currentPaymentStatus != null &&
+                currentPaymentStatus
+                        .trim()
+                        .equalsIgnoreCase(
+                                newPaymentStatus
+                        )) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Order payment is already in status: "
+                            + currentPaymentStatus
+            );
+        }
+
+        // =====================================================
+        // UPDATE PAYMENT STATUS
+        // =====================================================
+
+        order.setPaymentStatus(
+                newPaymentStatus
+        );
+
+        // =====================================================
+        // AUTOMATIC ORDER STATUS UPDATE
+        // =====================================================
+
+        /*
+         * Payment SUCCESS means the customer has
+         * successfully paid for the order.
+         *
+         * Therefore:
+         *
+         * PENDING_PAYMENT
+         *        ↓
+         *    CONFIRMED
+         *
+         * This happens automatically.
+         */
+
+        if ("SUCCESS".equals(newPaymentStatus)) {
+
+            String currentOrderStatus =
+                    order.getOrderStatus();
+
+            if ("PENDING_PAYMENT".equalsIgnoreCase(
+                    currentOrderStatus
+            )) {
+
+                order.setOrderStatus(
+                        "CONFIRMED"
+                );
+            }
+        }
+
+        // =====================================================
+        // FAILED PAYMENT
+        // =====================================================
+
+        /*
+         * When payment fails, the order remains
+         * PENDING_PAYMENT.
+         *
+         * The customer can attempt payment again.
+         */
+
+        if ("FAILED".equals(newPaymentStatus)) {
+
+            if ("PENDING_PAYMENT".equalsIgnoreCase(
+                    order.getOrderStatus()
+            )) {
+
+                order.setOrderStatus(
+                        "PENDING_PAYMENT"
+                );
+            }
+        }
+
+        // =====================================================
+        // REFUNDED PAYMENT
+        // =====================================================
+
+        /*
+         * REFUNDED does not automatically change the
+         * fulfillment status.
+         *
+         * Example:
+         *
+         * DELIVERED + REFUNDED
+         *
+         * remains:
+         *
+         * DELIVERED + REFUNDED
+         */
+
+        order.setUpdatedAt(
+                LocalDateTime.now()
+        );
+
+        return orderRepository.save(
+                order
         );
     }
 
@@ -230,9 +643,11 @@ public class OrderService {
             Long orderId,
             String newStatus) {
 
-        Order order = getOrderById(orderId);
+        Order order =
+                getOrderById(orderId);
 
-        String currentStatus = order.getOrderStatus();
+        String currentStatus =
+                order.getOrderStatus();
 
         // =====================================================
         // VALIDATE CURRENT STATUS
@@ -247,7 +662,10 @@ public class OrderService {
             );
         }
 
-        currentStatus = currentStatus.trim().toUpperCase();
+        currentStatus =
+                currentStatus
+                        .trim()
+                        .toUpperCase();
 
         // =====================================================
         // VALIDATE NEW STATUS
@@ -262,7 +680,10 @@ public class OrderService {
             );
         }
 
-        newStatus = newStatus.trim().toUpperCase();
+        newStatus =
+                newStatus
+                        .trim()
+                        .toUpperCase();
 
         // =====================================================
         // DO NOT UPDATE TO SAME STATUS
@@ -305,7 +726,8 @@ public class OrderService {
         // VALID ORDER STATUS TRANSITIONS
         // =====================================================
 
-        boolean validTransition = false;
+        boolean validTransition =
+                false;
 
         switch (currentStatus) {
 
@@ -316,6 +738,7 @@ public class OrderService {
             case "PENDING_PAYMENT":
 
                 if ("CONFIRMED".equals(newStatus)) {
+
                     validTransition = true;
                 }
 
@@ -328,6 +751,7 @@ public class OrderService {
             case "CONFIRMED":
 
                 if ("PROCESSING".equals(newStatus)) {
+
                     validTransition = true;
                 }
 
@@ -340,6 +764,7 @@ public class OrderService {
             case "PROCESSING":
 
                 if ("SHIPPED".equals(newStatus)) {
+
                     validTransition = true;
                 }
 
@@ -352,6 +777,7 @@ public class OrderService {
             case "SHIPPED":
 
                 if ("DELIVERED".equals(newStatus)) {
+
                     validTransition = true;
                 }
 
@@ -364,6 +790,7 @@ public class OrderService {
             case "DELIVERED":
 
                 if ("COMPLETED".equals(newStatus)) {
+
                     validTransition = true;
                 }
 
@@ -401,13 +828,17 @@ public class OrderService {
         // UPDATE STATUS
         // =====================================================
 
-        order.setOrderStatus(newStatus);
+        order.setOrderStatus(
+                newStatus
+        );
 
         order.setUpdatedAt(
                 LocalDateTime.now()
         );
 
-        return orderRepository.save(order);
+        return orderRepository.save(
+                order
+        );
     }
 
     // =========================================================
@@ -415,11 +846,32 @@ public class OrderService {
     // =========================================================
 
     @Transactional
-    public Order cancelOrder(Long orderId) {
+    public Order cancelOrder(
+            Long orderId) {
 
-        Order order = getOrderById(orderId);
+        Order order =
+                getOrderById(orderId);
 
-        String currentStatus = order.getOrderStatus();
+        String currentStatus =
+                order.getOrderStatus();
+
+        // =====================================================
+        // VALIDATE CURRENT STATUS
+        // =====================================================
+
+        if (currentStatus == null ||
+                currentStatus.trim().isEmpty()) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Current order status is missing"
+            );
+        }
+
+        currentStatus =
+                currentStatus
+                        .trim()
+                        .toUpperCase();
 
         // =====================================================
         // ALREADY CANCELLED
@@ -466,10 +918,29 @@ public class OrderService {
             for (OrderItem item :
                     order.getOrderItems()) {
 
-                inventoryClient.releaseStock(
-                        item.getProductId(),
-                        item.getQuantity()
-                );
+                if (item.getProductId() == null ||
+                        item.getQuantity() == null ||
+                        item.getQuantity() <= 0) {
+
+                    continue;
+                }
+
+                try {
+
+                    inventoryClient.releaseStock(
+                            item.getProductId(),
+                            item.getQuantity()
+                    );
+
+                } catch (Exception exception) {
+
+                    throw new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST,
+                            "Unable to release stock for product ID: "
+                                    + item.getProductId(),
+                            exception
+                    );
+                }
             }
         }
 
@@ -477,16 +948,23 @@ public class OrderService {
         // UPDATE ORDER
         // =====================================================
 
-        order.setOrderStatus("CANCELLED");
+        LocalDateTime now =
+                LocalDateTime.now();
+
+        order.setOrderStatus(
+                "CANCELLED"
+        );
 
         order.setCancelledAt(
-                LocalDateTime.now()
+                now
         );
 
         order.setUpdatedAt(
-                LocalDateTime.now()
+                now
         );
 
-        return orderRepository.save(order);
+        return orderRepository.save(
+                order
+        );
     }
 }

@@ -31,27 +31,114 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain)
             throws ServletException, IOException {
 
+        System.out.println(
+                "=================================================="
+        );
+
+        System.out.println(
+                "JWT FILTER EXECUTED"
+        );
+
+        System.out.println(
+                "Request URI: " + request.getRequestURI()
+        );
+
         String authorizationHeader =
                 request.getHeader("Authorization");
 
-        if (authorizationHeader == null ||
-                !authorizationHeader.startsWith("Bearer ")) {
+        // =====================================================
+        // CHECK AUTHORIZATION HEADER
+        // =====================================================
+
+        if (authorizationHeader == null) {
+
+            System.out.println(
+                    "JWT DEBUG: Authorization header is NULL"
+            );
 
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token = authorizationHeader.substring(7);
+        System.out.println(
+                "JWT DEBUG: Authorization header received"
+        );
+
+        if (!authorizationHeader.startsWith("Bearer ")) {
+
+            System.out.println(
+                    "JWT DEBUG: Authorization header does NOT start with Bearer"
+            );
+
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String token =
+                authorizationHeader.substring(7);
+
+        System.out.println(
+                "JWT DEBUG: Bearer token received"
+        );
 
         try {
 
-            String email = jwtService.extractEmail(token);
-            String role = jwtService.extractRole(token);
+            // =================================================
+            // EXTRACT EMAIL
+            // =================================================
+
+            String email =
+                    jwtService.extractEmail(token);
+
+            System.out.println(
+                    "JWT DEBUG: Extracted email = " + email
+            );
+
+            // =================================================
+            // EXTRACT ROLE
+            // =================================================
+
+            String role =
+                    jwtService.extractRole(token);
+
+            System.out.println(
+                    "JWT DEBUG: Extracted role = " + role
+            );
+
+            // =================================================
+            // CHECK CURRENT AUTHENTICATION
+            // =================================================
+
+            boolean alreadyAuthenticated =
+                    SecurityContextHolder.getContext()
+                            .getAuthentication() != null;
+
+            System.out.println(
+                    "JWT DEBUG: Already authenticated = "
+                            + alreadyAuthenticated
+            );
+
+            // =================================================
+            // VALIDATE TOKEN
+            // =================================================
+
+            boolean tokenValid =
+                    jwtService.isTokenValid(
+                            token,
+                            email
+                    );
+
+            System.out.println(
+                    "JWT DEBUG: Token valid = " + tokenValid
+            );
+
+            // =================================================
+            // CREATE AUTHENTICATION
+            // =================================================
 
             if (email != null &&
-                    SecurityContextHolder.getContext()
-                            .getAuthentication() == null &&
-                    jwtService.isTokenValid(token, email)) {
+                    !alreadyAuthenticated &&
+                    tokenValid) {
 
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
@@ -71,13 +158,65 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext()
                         .setAuthentication(authentication);
+
+                System.out.println(
+                        "JWT DEBUG: Authentication SUCCESS"
+                );
+
+                System.out.println(
+                        "JWT DEBUG: Principal = " + email
+                );
+
+                System.out.println(
+                        "JWT DEBUG: Role = " + role
+                );
+
+            } else {
+
+                System.out.println(
+                        "JWT DEBUG: Authentication NOT CREATED"
+                );
+
+                System.out.println(
+                        "JWT DEBUG: email != null = "
+                                + (email != null)
+                );
+
+                System.out.println(
+                        "JWT DEBUG: alreadyAuthenticated = "
+                                + alreadyAuthenticated
+                );
+
+                System.out.println(
+                        "JWT DEBUG: tokenValid = "
+                                + tokenValid
+                );
             }
 
         } catch (Exception exception) {
 
+            System.out.println(
+                    "JWT DEBUG: EXCEPTION OCCURRED"
+            );
+
+            exception.printStackTrace();
+
             SecurityContextHolder.clearContext();
         }
 
+        System.out.println(
+                "JWT DEBUG: Passing request to next filter"
+        );
+
         filterChain.doFilter(request, response);
+
+        System.out.println(
+                "JWT DEBUG: Response status = "
+                        + response.getStatus()
+        );
+
+        System.out.println(
+                "=================================================="
+        );
     }
 }

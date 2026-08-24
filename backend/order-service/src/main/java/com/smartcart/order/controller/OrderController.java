@@ -1,7 +1,9 @@
 package com.smartcart.order.controller;
 
+import com.smartcart.order.entity.Address;
 import com.smartcart.order.entity.Order;
 import com.smartcart.order.entity.OrderItem;
+import com.smartcart.order.repository.AddressRepository;
 import com.smartcart.order.service.OrderService;
 
 import org.springframework.http.HttpStatus;
@@ -15,10 +17,14 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+    private final AddressRepository addressRepository;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(
+            OrderService orderService,
+            AddressRepository addressRepository) {
 
         this.orderService = orderService;
+        this.addressRepository = addressRepository;
     }
 
     // =========================================================
@@ -28,6 +34,62 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<Order> createOrder(
             @RequestBody OrderRequest request) {
+
+        // -----------------------------------------------------
+        // Validate request
+        // -----------------------------------------------------
+
+        if (request == null ||
+                request.getOrder() == null ||
+                request.getOrderItems() == null ||
+                request.getOrderItems().isEmpty()) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .build();
+        }
+
+        // -----------------------------------------------------
+        // Find address using addressId
+        // -----------------------------------------------------
+
+        if (request.getAddressId() == null) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .build();
+        }
+
+        Address address = addressRepository
+                .findById(request.getAddressId())
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Address not found with id: "
+                                        + request.getAddressId()
+                        )
+                );
+
+        // -----------------------------------------------------
+        // Validate that address belongs to customer
+        // -----------------------------------------------------
+
+        if (!address.getCustomerId()
+                .equals(request.getOrder().getCustomerId())) {
+
+            throw new RuntimeException(
+                    "Address does not belong to the customer"
+            );
+        }
+
+        // -----------------------------------------------------
+        // Attach Address entity to Order
+        // -----------------------------------------------------
+
+        request.getOrder().setAddress(address);
+
+        // -----------------------------------------------------
+        // Create order using existing OrderService
+        // -----------------------------------------------------
 
         Order savedOrder = orderService.createOrder(
                 request.getOrder(),
@@ -61,7 +123,9 @@ public class OrderController {
             @PathVariable Long customerId) {
 
         return ResponseEntity.ok(
-                orderService.getOrdersByCustomerId(customerId)
+                orderService.getOrdersByCustomerId(
+                        customerId
+                )
         );
     }
 
@@ -74,7 +138,9 @@ public class OrderController {
             @PathVariable String orderStatus) {
 
         return ResponseEntity.ok(
-                orderService.getOrdersByStatus(orderStatus)
+                orderService.getOrdersByStatus(
+                        orderStatus
+                )
         );
     }
 
@@ -87,7 +153,26 @@ public class OrderController {
             @PathVariable String paymentStatus) {
 
         return ResponseEntity.ok(
-                orderService.getOrdersByPaymentStatus(paymentStatus)
+                orderService.getOrdersByPaymentStatus(
+                        paymentStatus
+                )
+        );
+    }
+
+    // =========================================================
+    // UPDATE PAYMENT STATUS
+    // =========================================================
+
+    @PutMapping("/{orderId}/payment-status")
+    public ResponseEntity<Order> updatePaymentStatus(
+            @PathVariable Long orderId,
+            @RequestParam String status) {
+
+        return ResponseEntity.ok(
+                orderService.updatePaymentStatus(
+                        orderId,
+                        status
+                )
         );
     }
 
@@ -129,7 +214,13 @@ public class OrderController {
 
         private Order order;
 
+        private Long addressId;
+
         private List<OrderItem> orderItems;
+
+        // -----------------------------------------------------
+        // Order
+        // -----------------------------------------------------
 
         public Order getOrder() {
 
@@ -140,6 +231,24 @@ public class OrderController {
 
             this.order = order;
         }
+
+        // -----------------------------------------------------
+        // Address ID
+        // -----------------------------------------------------
+
+        public Long getAddressId() {
+
+            return addressId;
+        }
+
+        public void setAddressId(Long addressId) {
+
+            this.addressId = addressId;
+        }
+
+        // -----------------------------------------------------
+        // Order Items
+        // -----------------------------------------------------
 
         public List<OrderItem> getOrderItems() {
 

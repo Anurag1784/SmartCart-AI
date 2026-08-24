@@ -27,6 +27,18 @@ public class Order {
     @Column(name = "customer_id", nullable = false)
     private Long customerId;
 
+    /*
+     * Request-only field.
+     *
+     * The client sends addressId in the create-order request.
+     * This field is NOT stored in the orders table.
+     *
+     * OrderService uses this ID to load the actual Address entity
+     * and set it into the address relationship before saving.
+     */
+    @Transient
+    private Long addressId;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;

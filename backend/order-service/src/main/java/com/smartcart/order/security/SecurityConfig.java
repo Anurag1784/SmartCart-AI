@@ -14,7 +14,9 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfig(
+            JwtAuthenticationFilter jwtAuthenticationFilter) {
+
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
@@ -23,7 +25,15 @@ public class SecurityConfig {
             HttpSecurity http) throws Exception {
 
         http
+                // =================================================
+                // CSRF
+                // =================================================
+
                 .csrf(csrf -> csrf.disable())
+
+                // =================================================
+                // STATELESS SESSION
+                // =================================================
 
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
@@ -31,10 +41,30 @@ public class SecurityConfig {
                         )
                 )
 
+                // =================================================
+                // AUTHORIZATION
+                // =================================================
+
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/error").permitAll()
-                        .anyRequest().authenticated()
+
+                        // Error endpoint
+                        .requestMatchers("/error")
+                        .permitAll()
+
+                        // Payment Service internal callback
+                        .requestMatchers(
+                                "/api/orders/*/payment-status"
+                        )
+                        .permitAll()
+
+                        // Everything else requires JWT
+                        .anyRequest()
+                        .authenticated()
                 )
+
+                // =================================================
+                // JWT FILTER
+                // =================================================
 
                 .addFilterBefore(
                         jwtAuthenticationFilter,
