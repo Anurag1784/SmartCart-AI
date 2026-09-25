@@ -1,0 +1,63 @@
+// Import the Hero section shown at the top of the homepage.
+import HeroSection from '../components/HeroSection'
+
+// Import the Features section that explains why SmartCart AI is useful.
+import FeaturesSection from '../components/FeaturesSection'
+
+// Import the NEW Customer/Seller section.
+// This will let visitors understand how they can use SmartCart AI.
+import UserTypeSection from '../components/UserTypeSection'
+
+// Import the Featured Products section.
+import ProductSection from '../components/ProductSection'
+
+// Import the Categories section.
+import CategorySection from '../components/CategorySection'
+
+// Import the How It Works section.
+import HowItWorksSection from '../components/HowItWorksSection'
+
+// Import the CTA section.
+import CTASection from '../components/CTASection'
+
+// Import the Footer.
+import Footer from '../components/Footer'
+
+
+function Home() {
+  return (
+    <main>
+
+      {/* Main introduction and SmartCart AI hero content. */}
+      <HeroSection />
+
+      {/* Explains the main benefits of SmartCart AI. */}
+      <FeaturesSection />
+
+      {/* 
+        Helps visitors choose how they want to use SmartCart AI:
+        Customer or Seller.
+      */}
+      <UserTypeSection />
+
+      {/* Shows curated products to visitors. */}
+      <ProductSection />
+
+      {/* Shows the available product categories. */}
+      <CategorySection />
+
+      {/* Explains the shopping process step-by-step. */}
+      <HowItWorksSection />
+
+      {/* Final call-to-action before the footer. */}
+      <CTASection />
+
+      {/* Website footer. */}
+      <Footer />
+
+    </main>
+  )
+}
+
+
+export default Home

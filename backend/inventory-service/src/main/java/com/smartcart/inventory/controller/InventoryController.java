@@ -112,4 +112,16 @@ public class InventoryController {
 
         return ResponseEntity.ok(available);
     }
+
+    // Delete inventory belonging to a product.
+    @DeleteMapping("/product/{productId}")
+    public ResponseEntity<Void> deleteInventory(
+            @PathVariable Long productId) {
+
+        // Ask the Inventory Service to delete this product's inventory.
+        inventoryService.deleteInventoryByProductId(productId);
+
+        // 204 means the deletion was successful and there is no response body.
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <!-- Vite default favicon -->
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
+    <!-- Make the application responsive on mobile devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Application title -->
+    <title>SmartCart AI</title>
+  </head>
+
+  <body>
+
+    <!-- React application will be mounted here -->
+    <div id="root"></div>
+
+
+    <!-- =======================================================
+         RAZORPAY CHECKOUT SDK
+         ======================================================= -->
+
+    <!--
+      This loads Razorpay's Checkout JavaScript library.
+
+      We are NOT putting our Razorpay Key ID or Secret here.
+
+      The Key ID will be provided later by React when we
+      actually open the Razorpay Checkout window.
+
+      The Key Secret NEVER belongs in the frontend.
+    -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
+    <!-- =======================================================
+         REACT APPLICATION
+         ======================================================= -->
+
+    <!-- Start the React/Vite application -->
+    <script type="module" src="/src/main.jsx"></script>
+
+  </body>
+</html>

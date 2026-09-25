@@ -1,0 +1,589 @@
+/* ============================================================
+   SELLER ADD PRODUCT PAGE
+   ============================================================ */
+
+.seller-add-product-page {
+  min-height: 100vh;
+  padding: 50px 6% 80px;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(99, 102, 241, 0.12),
+      transparent 35%
+    ),
+    #0b1120;
+  color: #f8fafc;
+}
+
+
+/* ============================================================
+   PAGE HEADER
+   ============================================================ */
+
+.seller-add-product-header {
+  max-width: 1100px;
+  margin: 0 auto 30px;
+}
+
+.seller-add-product-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.seller-add-product-back:hover {
+  color: #a5b4fc;
+}
+
+.seller-add-product-eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  color: #818cf8;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.seller-add-product-header h1 {
+  margin: 0;
+  color: #f8fafc;
+  font-size: clamp(30px, 4vw, 44px);
+  line-height: 1.1;
+}
+
+.seller-add-product-header p {
+  margin: 12px 0 0;
+  color: #94a3b8;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+
+/* ============================================================
+   FORM CARD
+   ============================================================ */
+
+.seller-add-product-card {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 20px;
+  background: rgba(15, 23, 42, 0.88);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+
+/* ============================================================
+   CARD HEADER
+   ============================================================ */
+
+.seller-add-product-card-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 28px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.seller-add-product-icon {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(129, 140, 248, 0.25);
+  border-radius: 14px;
+  background: rgba(99, 102, 241, 0.12);
+  color: #a5b4fc;
+}
+
+.seller-add-product-card-header h2 {
+  margin: 0 0 5px;
+  color: #f8fafc;
+  font-size: 20px;
+}
+
+.seller-add-product-card-header p {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+
+/* ============================================================
+   FORM
+   ============================================================ */
+
+.seller-add-product-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.seller-form-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.seller-form-full {
+  grid-column: 1 / -1;
+}
+
+
+/* ============================================================
+   LABELS
+   ============================================================ */
+
+.seller-form-group label {
+  margin-bottom: 9px;
+  color: #cbd5e1;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.seller-form-group label span {
+  color: #818cf8;
+}
+
+
+/* ============================================================
+   INPUTS / SELECT / TEXTAREA
+   ============================================================ */
+
+.seller-form-group input,
+.seller-form-group select,
+.seller-form-group textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 10px;
+  outline: none;
+  background: #111827;
+  color: #f8fafc;
+  font-family: inherit;
+  font-size: 14px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.seller-form-group input,
+.seller-form-group select {
+  height: 46px;
+  padding: 0 14px;
+}
+
+.seller-form-group textarea {
+  min-height: 140px;
+  padding: 13px 14px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+
+/* ============================================================
+   PLACEHOLDER
+   ============================================================ */
+
+.seller-form-group input::placeholder,
+.seller-form-group textarea::placeholder {
+  color: #475569;
+}
+
+
+/* ============================================================
+   FOCUS
+   ============================================================ */
+
+.seller-form-group input:focus,
+.seller-form-group select:focus,
+.seller-form-group textarea:focus {
+  border-color: #6366f1;
+  background: #0f172a;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+
+/* ============================================================
+   DISABLED SELECT
+   ============================================================ */
+
+.seller-form-group select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* ============================================================
+   HELPER TEXT
+   ============================================================ */
+
+.seller-form-group small {
+  margin-top: 7px;
+  color: #64748b;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+
+/* ============================================================
+   SUCCESS / ERROR MESSAGES
+   ============================================================ */
+
+.seller-add-product-success,
+.seller-add-product-error {
+  margin-bottom: 24px;
+  padding: 13px 15px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.seller-add-product-success {
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  background: rgba(34, 197, 94, 0.08);
+  color: #86efac;
+}
+
+.seller-add-product-error {
+  border: 1px solid rgba(248, 113, 113, 0.2);
+  background: rgba(248, 113, 113, 0.08);
+  color: #fca5a5;
+}
+
+
+/* ============================================================
+   FORM ACTIONS
+   ============================================================ */
+
+.seller-add-product-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  padding-top: 10px;
+  margin-top: 4px;
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+
+/* ============================================================
+   CANCEL BUTTON
+   ============================================================ */
+
+.seller-add-product-cancel,
+.seller-add-product-submit {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 18px;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.seller-add-product-cancel {
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: transparent;
+  color: #94a3b8;
+}
+
+.seller-add-product-cancel:hover:not(:disabled) {
+  border-color: rgba(148, 163, 184, 0.3);
+  background: rgba(148, 163, 184, 0.06);
+  color: #e2e8f0;
+}
+
+
+/* ============================================================
+   CREATE BUTTON
+   ============================================================ */
+
+.seller-add-product-submit {
+  border: 1px solid rgba(129, 140, 248, 0.35);
+  background: linear-gradient(
+    135deg,
+    #6366f1,
+    #7c3aed
+  );
+  color: #ffffff;
+  box-shadow: 0 8px 22px rgba(99, 102, 241, 0.2);
+}
+
+.seller-add-product-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px rgba(99, 102, 241, 0.28);
+}
+
+.seller-add-product-cancel:disabled,
+.seller-add-product-submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+
+/* ============================================================
+   SUBMIT LOADING SPINNER
+   ============================================================ */
+
+.seller-submit-spinner {
+  animation: seller-submit-spin 0.9s linear infinite;
+}
+
+@keyframes seller-submit-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================================
+   PRODUCT IMAGE UPLOAD
+   ============================================================ */
+
+.seller-product-image-upload {
+  width: 100%;
+  min-height: 150px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  border: 1px dashed rgba(129, 140, 248, 0.4);
+  border-radius: 14px;
+  background: rgba(99, 102, 241, 0.05);
+  color: #a5b4fc;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.seller-product-image-upload:hover {
+  border-color: rgba(129, 140, 248, 0.75);
+  background: rgba(99, 102, 241, 0.09);
+  transform: translateY(-1px);
+}
+
+.seller-product-image-upload strong {
+  color: #e2e8f0;
+  font-size: 14px;
+}
+
+.seller-product-image-upload span {
+  color: #64748b;
+  font-size: 12px;
+}
+
+
+/* ============================================================
+   PRODUCT IMAGE PREVIEW
+   ============================================================ */
+
+.seller-product-image-preview {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 14px;
+  background: #111827;
+}
+
+
+/* IMAGE SIZE CONTROL */
+
+.seller-product-image-preview img {
+  width: 180px;
+  height: 140px;
+  flex-shrink: 0;
+  display: block;
+  object-fit: contain;
+  border-radius: 10px;
+  background: #0b1120;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+
+/* IMAGE INFORMATION */
+
+.seller-product-image-preview-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.seller-product-image-preview-info strong {
+  max-width: 100%;
+  overflow: hidden;
+  color: #e2e8f0;
+  font-size: 13px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.seller-product-image-preview-info span {
+  color: #64748b;
+  font-size: 11px;
+}
+
+
+/* REMOVE IMAGE BUTTON */
+
+.seller-product-image-remove {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  padding: 7px 10px;
+  border: 1px solid rgba(248, 113, 113, 0.2);
+  border-radius: 8px;
+  background: rgba(248, 113, 113, 0.06);
+  color: #fca5a5;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.seller-product-image-remove:hover {
+  border-color: rgba(248, 113, 113, 0.4);
+  background: rgba(248, 113, 113, 0.12);
+}
+
+
+/* ============================================================
+   IMAGE PREVIEW - MOBILE
+   ============================================================ */
+
+@media (max-width: 520px) {
+
+  .seller-product-image-preview {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .seller-product-image-preview img {
+    width: 100%;
+    height: 220px;
+  }
+
+  .seller-product-image-preview-info {
+    width: 100%;
+  }
+
+  .seller-product-image-remove {
+    width: 100%;
+    justify-content: center;
+  }
+
+}
+
+
+/* ============================================================
+   TABLET
+   ============================================================ */
+
+@media (max-width: 800px) {
+
+  .seller-add-product-page {
+    padding: 40px 5% 60px;
+  }
+
+  .seller-add-product-card {
+    padding: 25px;
+  }
+
+  .seller-add-product-form {
+    grid-template-columns: 1fr;
+  }
+
+  .seller-form-full {
+    grid-column: auto;
+  }
+
+  .seller-add-product-actions {
+    grid-column: auto;
+  }
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 520px) {
+
+  .seller-add-product-page {
+    padding: 30px 18px 50px;
+  }
+
+  .seller-add-product-card {
+    padding: 20px;
+    border-radius: 16px;
+  }
+
+  .seller-add-product-card-header {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .seller-add-product-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .seller-add-product-header h1 {
+    font-size: 32px;
+  }
+
+  .seller-add-product-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .seller-add-product-cancel,
+  .seller-add-product-submit {
+    width: 100%;
+  }
+}

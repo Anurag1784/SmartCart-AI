@@ -1,0 +1,640 @@
+/* ============================================================
+   CUSTOMER PROFILE PAGE
+============================================================ */
+
+.profile-page {
+  min-height: calc(100vh - 78px);
+
+  padding: 70px 24px 100px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #dbeafe 0%,
+      #f8fafc 45%,
+      #eef2ff 100%
+    );
+}
+
+
+/* ============================================================
+   MAIN CONTAINER
+============================================================ */
+
+.profile-page-container {
+  width: 100%;
+
+  max-width: 1150px;
+
+  margin: 0 auto;
+}
+
+
+/* ============================================================
+   PROFILE HEADER
+============================================================ */
+
+.profile-header {
+  display: flex;
+
+  align-items: center;
+
+  gap: 20px;
+
+  margin-bottom: 35px;
+}
+
+
+.profile-avatar {
+  width: 68px;
+  height: 68px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #38bdf8,
+      #2563eb
+    );
+
+  color: #ffffff;
+
+  box-shadow:
+    0 10px 25px rgba(37, 99, 235, 0.25);
+}
+
+
+.profile-label {
+  margin: 0 0 8px;
+
+  color: #2563eb;
+
+  font-size: 13px;
+
+  font-weight: 800;
+
+  letter-spacing: 2px;
+}
+
+
+.profile-header h1 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 44px;
+
+  line-height: 1.15;
+
+  font-weight: 800;
+}
+
+
+.profile-header h1 span {
+  color: #2563eb;
+}
+
+
+.profile-description {
+  margin: 12px 0 0;
+
+  color: #64748b;
+
+  font-size: 16px;
+
+  line-height: 1.6;
+}
+
+
+/* ============================================================
+   PROFILE CARD
+============================================================ */
+
+.profile-card {
+  width: 100%;
+
+  padding: 32px;
+
+  background: rgba(255, 255, 255, 0.92);
+
+  border: 1px solid #dbeafe;
+
+  border-radius: 20px;
+
+  box-shadow:
+    0 12px 35px rgba(15, 23, 42, 0.07);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+
+/* ============================================================
+   PROFILE CARD HEADER
+============================================================ */
+
+.profile-card-header {
+  margin-bottom: 24px;
+}
+
+
+.profile-section-label {
+  margin: 0 0 7px;
+
+  color: #2563eb;
+
+  font-size: 12px;
+
+  font-weight: 800;
+
+  letter-spacing: 1.7px;
+}
+
+
+.profile-card-header h2,
+.profile-services-header h2 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 25px;
+
+  font-weight: 800;
+}
+
+
+/* ============================================================
+   PROFILE DETAILS
+============================================================ */
+
+.profile-details {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 16px;
+}
+
+
+.profile-detail {
+  min-height: 78px;
+
+  padding: 17px 19px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  gap: 6px;
+
+  background: #f8fafc;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 12px;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.profile-detail:hover {
+  transform: translateY(-2px);
+
+  border-color: #bfdbfe;
+
+  box-shadow:
+    0 6px 18px rgba(15, 23, 42, 0.06);
+}
+
+
+.profile-detail span {
+  color: #64748b;
+
+  font-size: 13px;
+
+  font-weight: 600;
+}
+
+
+.profile-detail strong {
+  color: #0f172a;
+
+  font-size: 16px;
+
+  font-weight: 700;
+
+  overflow-wrap: anywhere;
+}
+
+
+/* ============================================================
+   CUSTOMER SERVICES SECTION
+============================================================ */
+
+.profile-services {
+  margin-top: 45px;
+}
+
+
+.profile-services-header {
+  margin-bottom: 22px;
+}
+
+
+.profile-services-header > p:last-child {
+  margin: 10px 0 0;
+
+  color: #64748b;
+
+  font-size: 15px;
+
+  line-height: 1.6;
+}
+
+
+/* ============================================================
+   SERVICE GRID
+============================================================ */
+
+.profile-service-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 18px;
+}
+
+
+/* ============================================================
+   SERVICE CARD
+============================================================ */
+
+.profile-service-card {
+  position: relative;
+
+  min-height: 145px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 17px;
+
+  padding: 23px;
+
+  background: #ffffff;
+
+  border: 1px solid #dbe3ef;
+
+  border-radius: 18px;
+
+  color: inherit;
+
+  text-decoration: none;
+
+  box-shadow:
+    0 8px 25px rgba(15, 23, 42, 0.06);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+
+.profile-service-card:hover {
+  color: inherit;
+
+  transform: translateY(-5px);
+
+  border-color: #93c5fd;
+
+  box-shadow:
+    0 16px 32px rgba(15, 23, 42, 0.10);
+}
+
+
+/* ============================================================
+   SERVICE ICON
+============================================================ */
+
+.profile-service-icon {
+  width: 54px;
+  height: 54px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 14px;
+}
+
+
+/* Orders */
+
+.profile-orders-icon {
+  background: #eff6ff;
+
+  color: #2563eb;
+}
+
+
+/* Wishlist */
+
+.profile-wishlist-icon {
+  background: #fff1f2;
+
+  color: #e63946;
+}
+
+
+/* Addresses */
+
+.profile-address-icon {
+  background: #ecfdf5;
+
+  color: #059669;
+}
+
+
+/* Cart */
+
+.profile-cart-icon {
+  background: #fff7ed;
+
+  color: #ea580c;
+}
+
+
+/* ============================================================
+   SERVICE CONTENT
+============================================================ */
+
+.profile-service-content {
+  min-width: 0;
+
+  padding-right: 28px;
+}
+
+
+.profile-service-content h3 {
+  margin: 0 0 7px;
+
+  color: #0f172a;
+
+  font-size: 19px;
+
+  font-weight: 800;
+}
+
+
+.profile-service-content p {
+  margin: 0;
+
+  color: #64748b;
+
+  font-size: 14px;
+
+  line-height: 1.55;
+}
+
+
+/* ============================================================
+   SERVICE ARROW
+============================================================ */
+
+.profile-service-arrow {
+  position: absolute;
+
+  top: 50%;
+
+  right: 20px;
+
+  transform: translateY(-50%);
+
+  color: #94a3b8;
+
+  font-size: 24px;
+
+  line-height: 1;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.profile-service-card:hover .profile-service-arrow {
+  color: #2563eb;
+
+  transform:
+    translate(4px, -50%);
+}
+
+
+/* ============================================================
+   TABLET
+============================================================ */
+
+@media (max-width: 850px) {
+
+  .profile-page {
+    padding:
+      55px 20px 80px;
+  }
+
+
+  .profile-header h1 {
+    font-size: 38px;
+  }
+
+
+  .profile-service-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+@media (max-width: 600px) {
+
+  .profile-page {
+    padding:
+      45px 16px 70px;
+  }
+
+
+  .profile-header {
+    align-items: flex-start;
+
+    gap: 14px;
+
+    margin-bottom: 28px;
+  }
+
+
+  .profile-avatar {
+    width: 54px;
+    height: 54px;
+
+    border-radius: 15px;
+  }
+
+
+  .profile-avatar svg {
+    width: 27px;
+    height: 27px;
+  }
+
+
+  .profile-label {
+    font-size: 11px;
+  }
+
+
+  .profile-header h1 {
+    font-size: 31px;
+  }
+
+
+  .profile-description {
+    font-size: 14px;
+  }
+
+
+  .profile-card {
+    padding: 23px 18px;
+
+    border-radius: 17px;
+  }
+
+
+  .profile-card-header h2,
+  .profile-services-header h2 {
+    font-size: 22px;
+  }
+
+
+  .profile-details {
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+  }
+
+
+  .profile-detail {
+    min-height: 70px;
+  }
+
+
+  .profile-services {
+    margin-top: 35px;
+  }
+
+
+  .profile-service-card {
+    min-height: 125px;
+
+    padding: 18px;
+  }
+
+
+  .profile-service-icon {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 12px;
+  }
+
+
+  .profile-service-content h3 {
+    font-size: 17px;
+  }
+
+
+  .profile-service-content p {
+    font-size: 13px;
+  }
+
+}
+
+
+/* ============================================================
+   VERY SMALL MOBILE
+============================================================ */
+
+@media (max-width: 420px) {
+
+  .profile-header {
+    flex-direction: column;
+  }
+
+
+  .profile-header h1 {
+    font-size: 28px;
+  }
+
+
+  .profile-service-card {
+    gap: 12px;
+
+    padding: 16px;
+  }
+
+
+  .profile-service-icon {
+    width: 43px;
+    height: 43px;
+  }
+
+
+  .profile-service-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+
+  .profile-service-content {
+    padding-right: 22px;
+  }
+
+
+  .profile-service-content h3 {
+    font-size: 16px;
+  }
+
+
+  .profile-service-content p {
+    font-size: 12px;
+  }
+
+
+  .profile-service-arrow {
+    right: 13px;
+
+    font-size: 20px;
+  }
+
+}

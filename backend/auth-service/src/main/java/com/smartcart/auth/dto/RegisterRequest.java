@@ -2,6 +2,7 @@ package com.smartcart.auth.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class RegisterRequest {
@@ -16,17 +17,45 @@ public class RegisterRequest {
 
     @NotBlank(message = "Email is required")
     @Email(message = "Enter a valid email address")
+    @Pattern(
+        regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)+$",
+        message = "Enter a valid email address"
+    )
     @Size(max = 100, message = "Email must not exceed 100 characters")
     private String email;
 
     @NotBlank(message = "Password is required")
-    @Size(min = 8, max = 100, message = "Password must be between 8 and 100 characters")
+    @Size(
+        min = 8,
+        max = 100,
+        message = "Password must be between 8 and 100 characters"
+    )
     private String password;
 
-    @Size(max = 20, message = "Phone must not exceed 20 characters")
+    @NotBlank(message = "Phone number is required")
+    @Pattern(
+        regexp = "^[0-9]{10}$",
+        message = "Phone number must contain exactly 10 digits"
+    )
     private String phone;
 
-    // Getters and Setters
+    /*
+     * Account type selected during registration.
+     *
+     * Only CUSTOMER and SELLER are allowed through public registration.
+     * ADMIN registration is intentionally not allowed.
+     *
+     * CUSTOMER is the default value.
+     */
+    @Pattern(
+        regexp = "CUSTOMER|SELLER",
+        message = "Account type must be CUSTOMER or SELLER"
+    )
+    private String role = "CUSTOMER";
+
+    // =========================================================
+    // GETTERS AND SETTERS
+    // =========================================================
 
     public String getFirstName() {
         return firstName;
@@ -66,5 +95,13 @@ public class RegisterRequest {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

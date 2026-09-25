@@ -8,8 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.smartcart.auth.dto.AuthResponse;
+import com.smartcart.auth.dto.ForgotPasswordRequest;
 import com.smartcart.auth.dto.LoginRequest;
 import com.smartcart.auth.dto.RegisterRequest;
+import com.smartcart.auth.dto.ResetPasswordRequest;
+import com.smartcart.auth.dto.VerifyOtpRequest;
 import com.smartcart.auth.service.AuthService;
 
 import jakarta.validation.Valid;
@@ -21,6 +24,7 @@ public class AuthController {
     private final AuthService authService;
 
     public AuthController(AuthService authService) {
+
         this.authService = authService;
     }
 
@@ -42,5 +46,43 @@ public class AuthController {
         AuthResponse response = authService.login(request);
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(
+            @Valid @RequestBody ForgotPasswordRequest request) {
+
+        authService.forgotPassword(request.getEmail());
+
+        return ResponseEntity.ok(
+                "If an account exists for this email, a verification code has been sent.");
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<String> verifyOtp(
+            @Valid @RequestBody VerifyOtpRequest request) {
+
+        authService.verifyOtp(
+                request.getEmail(),
+                request.getOtp());
+
+        return ResponseEntity.ok(
+                "OTP verified successfully. You can now reset your password.");
+    }
+
+    // =========================================================
+    // RESET PASSWORD
+    // =========================================================
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(
+            @Valid @RequestBody ResetPasswordRequest request) {
+
+        authService.resetPassword(
+                request.getEmail(),
+                request.getNewPassword());
+
+        return ResponseEntity.ok(
+                "Password reset successfully. You can now login with your new password.");
     }
 }

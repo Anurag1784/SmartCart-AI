@@ -18,6 +18,10 @@ public class AddressController {
         this.addressService = addressService;
     }
 
+    // ============================================================
+    // CREATE ADDRESS
+    // ============================================================
+
     @PostMapping
     public ResponseEntity<Address> createAddress(
             @RequestBody Address address) {
@@ -30,6 +34,11 @@ public class AddressController {
                 .body(savedAddress);
     }
 
+
+    // ============================================================
+    // GET CUSTOMER ADDRESSES
+    // ============================================================
+
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<List<Address>> getAddressesByCustomerId(
             @PathVariable Long customerId) {
@@ -38,6 +47,11 @@ public class AddressController {
                 addressService.getAddressesByCustomerId(customerId)
         );
     }
+
+
+    // ============================================================
+    // GET ADDRESS BY ID
+    // ============================================================
 
     @GetMapping("/{addressId}")
     public ResponseEntity<Address> getAddressById(
@@ -48,22 +62,90 @@ public class AddressController {
         );
     }
 
+
+    // ============================================================
+    // UPDATE ADDRESS
+    // ============================================================
+
     @PutMapping("/{addressId}")
     public ResponseEntity<Address> updateAddress(
             @PathVariable Long addressId,
             @RequestBody Address address) {
 
         return ResponseEntity.ok(
-                addressService.updateAddress(addressId, address)
+                addressService.updateAddress(
+                        addressId,
+                        address
+                )
         );
     }
 
-    @DeleteMapping("/{addressId}")
-    public ResponseEntity<Void> deleteAddress(
+
+    // ============================================================
+    // SET DEFAULT ADDRESS
+    // ============================================================
+
+    @PutMapping("/{addressId}/default")
+    public ResponseEntity<Address> setDefaultAddress(
             @PathVariable Long addressId) {
 
-        addressService.deleteAddress(addressId);
+        return ResponseEntity.ok(
+                addressService.setDefaultAddress(
+                        addressId
+                )
+        );
+    }
 
-        return ResponseEntity.noContent().build();
+
+    // ============================================================
+    // DELETE ADDRESS
+    // ============================================================
+
+    @DeleteMapping("/{addressId}")
+    public ResponseEntity<?> deleteAddress(
+            @PathVariable Long addressId) {
+
+        try {
+
+            addressService.deleteAddress(addressId);
+
+            return ResponseEntity
+                    .noContent()
+                    .build();
+
+        } catch (RuntimeException exception) {
+
+            /*
+             * Address is linked to an existing order.
+             *
+             * Returning 409 Conflict tells the frontend
+             * that the request itself was valid, but the
+             * address cannot be deleted because of an
+             * existing relationship.
+             */
+
+            if (exception.getMessage() != null
+                    && exception.getMessage().contains(
+                            "linked to an existing order"
+                    )) {
+
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body(
+                                exception.getMessage()
+                        );
+            }
+
+
+            /*
+             * Preserve other existing runtime errors.
+             */
+
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(
+                            exception.getMessage()
+                    );
+        }
     }
 }

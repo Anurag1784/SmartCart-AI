@@ -1,0 +1,506 @@
+/* ========================================
+   CTA SECTION
+======================================== */
+
+.cta-section {
+  position: relative;
+
+  min-height: 620px;
+
+  padding: 105px 6%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      135deg,
+      #020617 0%,
+      #0f172a 45%,
+      #111827 70%,
+      #172554 100%
+    );
+}
+
+
+/* ========================================
+   BACKGROUND GLOWS
+======================================== */
+
+.cta-glow {
+  position: absolute;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  filter: blur(25px);
+}
+
+
+.cta-glow-left {
+  width: 450px;
+  height: 450px;
+
+  top: -280px;
+  left: -170px;
+
+  background: rgba(37, 99, 235, 0.28);
+}
+
+
+.cta-glow-right {
+  width: 500px;
+  height: 500px;
+
+  right: -260px;
+  bottom: -300px;
+
+  background: rgba(99, 102, 241, 0.26);
+}
+
+
+/* ========================================
+   GRID PATTERN
+======================================== */
+
+.cta-grid-pattern {
+  position: absolute;
+
+  top: 65px;
+  right: 65px;
+
+  display: grid;
+
+  grid-template-columns: repeat(4, 5px);
+
+  gap: 17px;
+
+  opacity: 0.35;
+
+  pointer-events: none;
+}
+
+
+.cta-grid-pattern span {
+  width: 5px;
+  height: 5px;
+
+  border-radius: 50%;
+
+  background: #93c5fd;
+}
+
+
+/* ========================================
+   MAIN CONTAINER
+======================================== */
+
+.cta-container {
+  position: relative;
+
+  z-index: 2;
+
+  width: 100%;
+
+  max-width: 1050px;
+
+  margin: 0 auto;
+}
+
+
+/* ========================================
+   CTA CONTENT
+======================================== */
+
+.cta-content {
+  padding: 65px 50px;
+
+  text-align: center;
+
+  border: 1px solid rgba(148, 163, 184, 0.20);
+
+  border-radius: 28px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(15, 23, 42, 0.72),
+      rgba(30, 41, 59, 0.52)
+    );
+
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.30);
+
+  backdrop-filter: blur(15px);
+}
+
+
+/* ========================================
+   CTA ICON
+======================================== */
+
+.cta-icon {
+  width: 58px;
+  height: 58px;
+
+  margin: 0 auto 22px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border: 1px solid rgba(147, 197, 253, 0.25);
+
+  border-radius: 16px;
+
+  background: rgba(37, 99, 235, 0.18);
+
+  color: #60a5fa;
+
+  box-shadow:
+    0 10px 25px rgba(37, 99, 235, 0.16);
+}
+
+
+/* ========================================
+   LABEL
+======================================== */
+
+.cta-label {
+  margin: 0 0 17px;
+
+  color: #60a5fa;
+
+  font-size: 14px;
+
+  font-weight: 800;
+
+  letter-spacing: 2px;
+}
+
+
+/* ========================================
+   HEADING
+======================================== */
+
+.cta-content h2 {
+  max-width: 820px;
+
+  margin: 0 auto;
+
+  color: #ffffff;
+
+  font-size: 52px;
+
+  line-height: 1.15;
+
+  font-weight: 800;
+
+  letter-spacing: -1.2px;
+}
+
+
+.cta-content h2 span {
+  color: #60a5fa;
+}
+
+
+/* ========================================
+   DESCRIPTION
+======================================== */
+
+.cta-description {
+  max-width: 700px;
+
+  margin: 22px auto 0;
+
+  color: #cbd5e1;
+
+  font-size: 18px;
+
+  line-height: 1.75;
+}
+
+
+/* ========================================
+   CTA BUTTONS
+======================================== */
+
+.cta-actions {
+  margin-top: 36px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 14px;
+}
+
+
+/* ========================================
+   PRIMARY BUTTON
+======================================== */
+
+.cta-primary-button {
+  min-height: 52px;
+
+  padding: 0 22px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 9px;
+
+  border: 1px solid #2563eb;
+
+  border-radius: 10px;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  text-decoration: none;
+
+  font-size: 15px;
+
+  font-weight: 800;
+
+  box-shadow:
+    0 10px 25px rgba(37, 99, 235, 0.30);
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+.cta-primary-button:hover {
+  transform: translateY(-3px);
+
+  background: #1d4ed8;
+
+  box-shadow:
+    0 15px 30px rgba(37, 99, 235, 0.40);
+}
+
+
+/* ========================================
+   SECONDARY BUTTON
+======================================== */
+
+.cta-secondary-button {
+  min-height: 52px;
+
+  padding: 0 23px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border: 1px solid rgba(147, 197, 253, 0.65);
+
+  border-radius: 10px;
+
+  background: rgba(255, 255, 255, 0.04);
+
+  color: #ffffff;
+
+  text-decoration: none;
+
+  font-size: 15px;
+
+  font-weight: 800;
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+
+.cta-secondary-button:hover {
+  transform: translateY(-3px);
+
+  background: #ffffff;
+
+  color: #0f172a;
+
+  border-color: #ffffff;
+}
+
+
+/* ========================================
+   TRUST MESSAGE
+======================================== */
+
+.cta-trust {
+  margin-top: 28px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 9px;
+
+  color: #94a3b8;
+
+  font-size: 12px;
+
+  font-weight: 600;
+}
+
+
+.cta-trust-dot {
+  width: 7px;
+  height: 7px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #60a5fa;
+
+  box-shadow:
+    0 0 0 4px rgba(96, 165, 250, 0.10);
+}
+
+
+/* ========================================
+   TABLET
+======================================== */
+
+@media (max-width: 800px) {
+
+  .cta-section {
+    padding: 85px 5%;
+  }
+
+  .cta-content {
+    padding: 55px 35px;
+  }
+
+  .cta-content h2 {
+    font-size: 44px;
+  }
+
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 600px) {
+
+  .cta-section {
+    min-height: auto;
+
+    padding: 70px 18px;
+  }
+
+  .cta-grid-pattern {
+    display: none;
+  }
+
+  .cta-glow-left {
+    width: 280px;
+    height: 280px;
+
+    top: -150px;
+    left: -150px;
+  }
+
+  .cta-glow-right {
+    width: 300px;
+    height: 300px;
+
+    right: -170px;
+    bottom: -170px;
+  }
+
+  .cta-content {
+    padding: 45px 24px;
+
+    border-radius: 22px;
+  }
+
+  .cta-icon {
+    width: 52px;
+    height: 52px;
+
+    margin-bottom: 20px;
+  }
+
+  .cta-label {
+    font-size: 12px;
+  }
+
+  .cta-content h2 {
+    font-size: 36px;
+  }
+
+  .cta-description {
+    font-size: 16px;
+  }
+
+  .cta-actions {
+    flex-direction: column;
+
+    width: 100%;
+
+    max-width: 300px;
+
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cta-primary-button,
+  .cta-secondary-button {
+    width: 100%;
+  }
+
+  .cta-trust {
+    line-height: 1.6;
+  }
+
+}
+
+
+/* ========================================
+   SMALL MOBILE
+======================================== */
+
+@media (max-width: 400px) {
+
+  .cta-content {
+    padding: 40px 20px;
+  }
+
+  .cta-content h2 {
+    font-size: 32px;
+  }
+
+  .cta-description {
+    font-size: 15px;
+  }
+
+}

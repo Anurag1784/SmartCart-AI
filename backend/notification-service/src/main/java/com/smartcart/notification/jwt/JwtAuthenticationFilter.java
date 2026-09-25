@@ -31,53 +31,89 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain)
             throws ServletException, IOException {
 
-        final String authHeader = request.getHeader("Authorization");
+        // Read the Authorization header sent by the frontend.
+        final String authHeader =
+                request.getHeader("Authorization");
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        // If there is no Bearer token, continue the request normally.
+        if (authHeader == null ||
+                !authHeader.startsWith("Bearer ")) {
+
             filterChain.doFilter(request, response);
             return;
         }
 
+        // Remove "Bearer " and keep only the JWT.
         final String token = authHeader.substring(7);
 
-        if (!jwtService.isTokenValid(token)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         try {
-            String username = jwtService.extractUsername(token);
-            String role = jwtService.extractRole(token);
 
-            if (username != null
-                    && SecurityContextHolder.getContext().getAuthentication() == null) {
+            // Extract the user's email from the JWT subject.
+            String email =
+                    jwtService.extractUsername(token);
 
-                List<SimpleGrantedAuthority> authorities =
-                        role != null
-                                ? List.of(new SimpleGrantedAuthority("ROLE_" + role))
-                                : List.of();
+            // Extract the user's role from the JWT.
+            String role =
+                    jwtService.extractRole(token);
 
+            // Extract the authenticated user's database ID
+            // from the "userId" JWT claim.
+            Long userId =
+                    jwtService.extractUserId(token);
+
+            /*
+             * Create authentication only when:
+             *
+             * 1. Email exists.
+             * 2. User ID exists.
+             * 3. No authentication already exists.
+             * 4. JWT is valid.
+             */
+            if (email != null &&
+                    userId != null &&
+                    SecurityContextHolder.getContext()
+                            .getAuthentication() == null &&
+                    jwtService.isTokenValid(token)) {
+
+                /*
+                 * Store the authenticated user's ID as the
+                 * Spring Security principal.
+                 *
+                 * Later the Notification Controller can retrieve
+                 * this userId from SecurityContextHolder.
+                 */
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
-                                username,
+                                userId,
                                 null,
-                                authorities
+                                role != null
+                                        ? List.of(
+                                                new SimpleGrantedAuthority(
+                                                        "ROLE_" + role
+                                                )
+                                        )
+                                        : List.of()
                         );
 
+                // Store request-specific authentication details.
                 authentication.setDetails(
                         new WebAuthenticationDetailsSource()
                                 .buildDetails(request)
                 );
 
+                // Store authentication in Spring Security context.
                 SecurityContextHolder
                         .getContext()
                         .setAuthentication(authentication);
             }
 
         } catch (Exception exception) {
+
+            // Clear authentication if the JWT is invalid.
             SecurityContextHolder.clearContext();
         }
 
+        // Continue processing the request.
         filterChain.doFilter(request, response);
     }
 }

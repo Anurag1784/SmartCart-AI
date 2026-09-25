@@ -6,6 +6,7 @@ import com.smartcart.notification.dto.OrderNotificationRequest;
 import com.smartcart.notification.dto.PaymentNotificationRequest;
 import com.smartcart.notification.entity.Notification;
 import com.smartcart.notification.repository.NotificationRepository;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,13 +16,18 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
 
-    public NotificationService(NotificationRepository notificationRepository) {
+    public NotificationService(
+            NotificationRepository notificationRepository) {
 
         this.notificationRepository = notificationRepository;
-
     }
 
-    public NotificationResponse createNotification(NotificationRequest request) {
+    // =========================================================
+    // CREATE GENERAL NOTIFICATION
+    // =========================================================
+
+    public NotificationResponse createNotification(
+            NotificationRequest request) {
 
         Notification notification = Notification.builder()
                 .userId(request.getUserId())
@@ -35,6 +41,10 @@ public class NotificationService {
 
         return mapToResponse(savedNotification);
     }
+
+    // =========================================================
+    // CREATE ORDER NOTIFICATION
+    // =========================================================
 
     public NotificationResponse createOrderNotification(
             OrderNotificationRequest request) {
@@ -56,6 +66,10 @@ public class NotificationService {
 
         return mapToResponse(savedNotification);
     }
+
+    // =========================================================
+    // CREATE PAYMENT NOTIFICATION
+    // =========================================================
 
     public NotificationResponse createPaymentNotification(
             PaymentNotificationRequest request) {
@@ -79,7 +93,12 @@ public class NotificationService {
         return mapToResponse(savedNotification);
     }
 
-    public List<NotificationResponse> getNotificationsByUserId(Long userId) {
+    // =========================================================
+    // GET ALL USER NOTIFICATIONS
+    // =========================================================
+
+    public List<NotificationResponse> getNotificationsByUserId(
+            Long userId) {
 
         return notificationRepository
                 .findByUserIdOrderByCreatedAtDesc(userId)
@@ -87,6 +106,10 @@ public class NotificationService {
                 .map(this::mapToResponse)
                 .toList();
     }
+
+    // =========================================================
+    // GET UNREAD USER NOTIFICATIONS
+    // =========================================================
 
     public List<NotificationResponse> getUnreadNotificationsByUserId(
             Long userId) {
@@ -98,24 +121,51 @@ public class NotificationService {
                 .toList();
     }
 
-    public NotificationResponse markAsRead(Long notificationId) {
+    // =========================================================
+    // MARK NOTIFICATION AS READ
+    // =========================================================
 
-        Notification notification = notificationRepository
-                .findById(notificationId)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Notification not found with ID: "
-                                        + notificationId
-                        )
-                );
+    public NotificationResponse markAsRead(
+            Long notificationId,
+            Long authenticatedUserId) {
 
+        Notification notification =
+                notificationRepository
+                        .findById(notificationId)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Notification not found with ID: "
+                                                + notificationId
+                                )
+                        );
+
+        /*
+         * Security check:
+         *
+         * Make sure the notification belongs to the
+         * currently authenticated user.
+         */
+        if (!notification.getUserId()
+                .equals(authenticatedUserId)) {
+
+            throw new RuntimeException(
+                    "You are not allowed to modify this notification"
+            );
+        }
+
+        // Mark the notification as read.
         notification.setIsRead(true);
 
+        // Save the updated notification.
         Notification updatedNotification =
                 notificationRepository.save(notification);
 
         return mapToResponse(updatedNotification);
     }
+
+    // =========================================================
+    // MAP ENTITY → RESPONSE
+    // =========================================================
 
     private NotificationResponse mapToResponse(
             Notification notification) {

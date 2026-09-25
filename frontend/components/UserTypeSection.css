@@ -1,0 +1,528 @@
+/* =========================================================
+   USER TYPE SECTION
+   ========================================================= */
+
+.user-type-section {
+  position: relative;
+  min-height: 760px;
+  padding: 110px 6% 115px;
+
+  /* Keep the section visually connected with the existing
+     light/blue homepage design. */
+  background:
+    linear-gradient(
+      135deg,
+      #f8fafc 0%,
+      #eff6ff 45%,
+      #f5f3ff 100%
+    );
+
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   BACKGROUND DECORATIONS
+   ========================================================= */
+
+.user-type-glow {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(4px);
+}
+
+
+/* Top-left decorative glow. */
+.user-type-glow-one {
+  width: 330px;
+  height: 330px;
+  top: -140px;
+  left: -100px;
+
+  background: rgba(59, 130, 246, 0.10);
+}
+
+
+/* Bottom-right decorative glow. */
+.user-type-glow-two {
+  width: 380px;
+  height: 380px;
+  right: -150px;
+  bottom: -180px;
+
+  background: rgba(139, 92, 246, 0.09);
+}
+
+
+/* =========================================================
+   MAIN CONTAINER
+   ========================================================= */
+
+.user-type-container {
+  position: relative;
+  z-index: 2;
+
+  width: 100%;
+  max-width: 1280px;
+
+  margin: 0 auto;
+}
+
+
+/* =========================================================
+   SECTION HEADER
+   ========================================================= */
+
+.user-type-header {
+  max-width: 760px;
+  margin: 0 auto 60px;
+
+  text-align: center;
+}
+
+
+/* Small label above the heading. */
+.user-type-label {
+  display: inline-block;
+
+  margin-bottom: 16px;
+
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 2px;
+
+  color: #2563eb;
+}
+
+
+/* Main heading. */
+.user-type-header h2 {
+  margin: 0;
+
+  font-size: 50px;
+  line-height: 1.15;
+  font-weight: 800;
+
+  letter-spacing: -1.5px;
+
+  color: #0f172a;
+}
+
+
+/* Highlight SmartCart AI in the heading. */
+.user-type-header h2 span {
+  color: #2563eb;
+}
+
+
+/* Header description. */
+.user-type-header p {
+  max-width: 680px;
+
+  margin: 20px auto 0;
+
+  font-size: 17px;
+  line-height: 1.7;
+
+  color: #64748b;
+}
+
+
+/* =========================================================
+   CUSTOMER + SELLER GRID
+   ========================================================= */
+
+.user-type-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 30px;
+}
+
+
+/* =========================================================
+   COMMON CARD
+   ========================================================= */
+
+.user-type-card {
+  position: relative;
+
+  display: flex;
+  gap: 28px;
+
+  min-height: 430px;
+
+  padding: 38px;
+
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 28px;
+
+  background: rgba(255, 255, 255, 0.72);
+
+  box-shadow:
+    0 20px 55px rgba(15, 23, 42, 0.08);
+
+  backdrop-filter: blur(14px);
+
+  overflow: hidden;
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+
+
+/* Top accent line on each card. */
+.user-type-card::before {
+  content: '';
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+  right: 0;
+
+  height: 4px;
+
+  background: #2563eb;
+}
+
+
+/* Customer card gets a slightly different accent. */
+.seller-card::before {
+  background: #7c3aed;
+}
+
+
+/* Card hover effect. */
+.user-type-card:hover {
+  transform: translateY(-8px);
+
+  box-shadow:
+    0 28px 65px rgba(15, 23, 42, 0.13);
+
+  border-color: rgba(96, 165, 250, 0.35);
+}
+
+
+/* =========================================================
+   ICON
+   ========================================================= */
+
+.user-type-icon {
+  flex-shrink: 0;
+
+  width: 68px;
+  height: 68px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 20px;
+}
+
+
+/* Customer icon background. */
+.customer-icon {
+  color: #2563eb;
+  background: rgba(219, 234, 254, 0.9);
+}
+
+
+/* Seller icon background. */
+.seller-icon {
+  color: #7c3aed;
+  background: rgba(237, 233, 254, 0.9);
+}
+
+
+/* =========================================================
+   CARD CONTENT
+   ========================================================= */
+
+.user-type-content {
+  flex: 1;
+}
+
+
+/* Role label. */
+.user-type-role {
+  display: inline-block;
+
+  margin-bottom: 10px;
+
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+
+  color: #64748b;
+}
+
+
+/* Card heading. */
+.user-type-content h3 {
+  margin: 0;
+
+  font-size: 32px;
+  line-height: 1.2;
+  font-weight: 800;
+
+  color: #0f172a;
+}
+
+
+/* Card description. */
+.user-type-content > p {
+  margin: 14px 0 24px;
+
+  font-size: 15px;
+  line-height: 1.7;
+
+  color: #64748b;
+}
+
+
+/* =========================================================
+   FEATURES LIST
+   ========================================================= */
+
+.user-type-features {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+
+  margin: 0 0 30px;
+  padding: 0;
+
+  list-style: none;
+}
+
+
+.user-type-features li {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  color: #334155;
+}
+
+
+/* Icons inside the feature list. */
+.user-type-features li svg {
+  flex-shrink: 0;
+
+  color: #2563eb;
+}
+
+
+/* Seller feature icons. */
+.seller-card .user-type-features li svg {
+  color: #7c3aed;
+}
+
+
+/* =========================================================
+   ACTION BUTTON
+   ========================================================= */
+
+.user-type-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 9px;
+
+  min-height: 48px;
+
+  padding: 0 22px;
+
+  border-radius: 12px;
+
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+
+
+/* Customer button. */
+.customer-button {
+  color: #ffffff;
+  background: #2563eb;
+
+  box-shadow:
+    0 10px 24px rgba(37, 99, 235, 0.22);
+}
+
+
+/* Seller button. */
+.seller-button {
+  color: #ffffff;
+  background: #7c3aed;
+
+  box-shadow:
+    0 10px 24px rgba(124, 58, 237, 0.20);
+}
+
+
+/* Button hover. */
+.user-type-button:hover {
+  transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+  .user-type-section {
+    padding: 90px 5% 95px;
+  }
+
+
+  .user-type-header {
+    margin-bottom: 45px;
+  }
+
+
+  .user-type-header h2 {
+    font-size: 42px;
+  }
+
+
+  .user-type-grid {
+    gap: 22px;
+  }
+
+
+  .user-type-card {
+    gap: 20px;
+
+    padding: 30px;
+
+    min-height: 450px;
+  }
+
+
+  .user-type-icon {
+    width: 58px;
+    height: 58px;
+
+    border-radius: 17px;
+  }
+
+
+  .user-type-content h3 {
+    font-size: 28px;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+  .user-type-section {
+    min-height: auto;
+
+    padding: 75px 5% 80px;
+  }
+
+
+  .user-type-header {
+    margin-bottom: 38px;
+  }
+
+
+  .user-type-header h2 {
+    font-size: 36px;
+  }
+
+
+  .user-type-header p {
+    font-size: 15px;
+  }
+
+
+  /* Stack Customer and Seller cards vertically. */
+  .user-type-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  .user-type-card {
+    min-height: auto;
+
+    padding: 28px;
+  }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 430px) {
+
+  .user-type-section {
+    padding: 65px 5% 70px;
+  }
+
+
+  .user-type-header h2 {
+    font-size: 31px;
+
+    letter-spacing: -0.8px;
+  }
+
+
+  .user-type-header p {
+    font-size: 14px;
+  }
+
+
+  .user-type-card {
+    display: block;
+
+    padding: 25px;
+
+    border-radius: 22px;
+  }
+
+
+  .user-type-icon {
+    margin-bottom: 20px;
+  }
+
+
+  .user-type-content h3 {
+    font-size: 26px;
+  }
+
+
+  .user-type-content > p {
+    font-size: 14px;
+  }
+
+
+  .user-type-button {
+    width: 100%;
+  }
+}

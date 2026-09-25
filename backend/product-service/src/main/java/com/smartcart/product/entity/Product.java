@@ -31,7 +31,31 @@ public class Product {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @NotNull(message = "Seller ID is required")
+    /*
+     * Seller ID is intentionally NOT annotated with @NotNull.
+     *
+     * Why?
+     *
+     * The frontend must NOT provide the sellerId.
+     *
+     * The sellerId is automatically taken from the authenticated
+     * user's JWT inside ProductController.
+     *
+     * Flow:
+     *
+     * Request
+     *    ↓
+     * @Valid validation
+     *    ↓
+     * ProductController
+     *    ↓
+     * product.setSellerId(authenticatedUserId)
+     *    ↓
+     * ProductService
+     *
+     * The database column is still nullable = false, so the
+     * database will never allow a product without a seller ID.
+     */
     @Column(name = "seller_id", nullable = false)
     private Long sellerId;
 
@@ -82,6 +106,15 @@ public class Product {
         unique = true
     )
     private String sku;
+
+    // Stores the URL of the product image.
+    // The actual image file will not be stored inside MySQL.
+    @Size(
+        max = 1000,
+        message = "Image URL must not exceed 1000 characters"
+    )
+    @Column(name = "image_url", length = 1000)
+    private String imageUrl;
 
     @Size(
         max = 30,
@@ -169,6 +202,14 @@ public class Product {
 
     public void setSku(String sku) {
         this.sku = sku;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public String getStatus() {

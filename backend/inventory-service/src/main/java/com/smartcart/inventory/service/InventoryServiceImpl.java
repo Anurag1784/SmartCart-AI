@@ -196,6 +196,21 @@ public class InventoryServiceImpl implements InventoryService {
         return inventory.getAvailableQuantity() >= quantity;
     }
 
+    // Deletes the inventory record belonging to the given product.
+    @Override
+    public void deleteInventoryByProductId(Long productId) {
+
+        // Check whether inventory actually exists before deleting it.
+        if (!inventoryRepository.existsByProductId(productId)) {
+            throw new InventoryNotFoundException(
+                    "Inventory not found for product ID: " + productId
+            );
+        }
+
+        // Delete only the inventory belonging to this product.
+        inventoryRepository.deleteByProductId(productId);
+    }
+
     private Inventory findInventoryByProductId(Long productId) {
 
         return inventoryRepository.findByProductId(productId)

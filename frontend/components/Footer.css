@@ -1,0 +1,457 @@
+/* ========================================
+   FOOTER
+======================================== */
+
+.footer {
+  position: relative;
+
+  padding: 75px 6% 25px;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      135deg,
+      #020617 0%,
+      #0f172a 48%,
+      #111827 72%,
+      #172554 100%
+    );
+
+  color: #ffffff;
+}
+
+
+/* ========================================
+   BACKGROUND GLOWS
+======================================== */
+
+.footer-glow {
+  position: absolute;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  filter: blur(30px);
+}
+
+
+.footer-glow-left {
+  width: 380px;
+  height: 380px;
+
+  top: -270px;
+  left: -160px;
+
+  background: rgba(37, 99, 235, 0.18);
+}
+
+
+.footer-glow-right {
+  width: 430px;
+  height: 430px;
+
+  right: -240px;
+  bottom: -300px;
+
+  background: rgba(99, 102, 241, 0.16);
+}
+
+
+/* ========================================
+   MAIN CONTAINER
+======================================== */
+
+.footer-container {
+  position: relative;
+
+  z-index: 2;
+
+  width: 100%;
+
+  max-width: 1280px;
+
+  margin: 0 auto;
+
+  display: grid;
+
+  grid-template-columns: 2fr 1fr 1fr 1.3fr;
+
+  gap: 55px;
+}
+
+
+/* ========================================
+   BRAND
+======================================== */
+
+.footer-brand {
+  max-width: 370px;
+}
+
+
+.footer-brand-name {
+  display: inline-block;
+
+  margin-bottom: 16px;
+
+  color: #ffffff;
+
+  font-size: 27px;
+
+  font-weight: 800;
+
+  letter-spacing: -0.5px;
+
+  text-decoration: none;
+
+  transition: color 0.2s ease;
+}
+
+
+.footer-brand-name:hover {
+  color: #60a5fa;
+}
+
+
+.footer-brand-description {
+  margin: 0;
+
+  color: #94a3b8;
+
+  font-size: 14px;
+
+  line-height: 1.75;
+}
+
+
+.footer-brand-tag {
+  width: fit-content;
+
+  margin-top: 22px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  color: #60a5fa;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+
+/* ========================================
+   FOOTER COLUMN
+======================================== */
+
+.footer-column {
+  position: relative;
+
+  z-index: 2;
+}
+
+
+.footer-column h4 {
+  margin: 0 0 20px;
+
+  color: #ffffff;
+
+  font-size: 16px;
+
+  font-weight: 800;
+}
+
+
+/* ========================================
+   FOOTER LINKS
+======================================== */
+
+.footer-links {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  gap: 13px;
+}
+
+
+.footer-links a,
+.footer-links button {
+  width: fit-content;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #94a3b8;
+
+  font-family: inherit;
+
+  font-size: 14px;
+
+  line-height: 1.4;
+
+  text-decoration: none;
+
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.footer-links a:hover,
+.footer-links button:hover {
+  color: #60a5fa;
+
+  transform: translateX(3px);
+}
+
+
+/* ========================================
+   CONNECT COLUMN
+======================================== */
+
+.footer-connect > p {
+  max-width: 240px;
+
+  margin: 0;
+
+  color: #94a3b8;
+
+  font-size: 14px;
+
+  line-height: 1.7;
+}
+
+
+/* ========================================
+   EMAIL BUTTON
+======================================== */
+
+.footer-email {
+  width: fit-content;
+
+  margin-top: 19px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 10px 14px;
+
+  border: 1px solid #334155;
+
+  border-radius: 9px;
+
+  background: rgba(255, 255, 255, 0.03);
+
+  color: #cbd5e1;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  text-decoration: none;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+
+.footer-email:hover {
+  transform: translateY(-2px);
+
+  background: rgba(37, 99, 235, 0.16);
+
+  border-color: #3b82f6;
+
+  color: #ffffff;
+}
+
+
+/* ========================================
+   FOOTER BOTTOM
+======================================== */
+
+.footer-bottom {
+  position: relative;
+
+  z-index: 2;
+
+  width: 100%;
+
+  max-width: 1280px;
+
+  margin: 55px auto 0;
+
+  padding-top: 22px;
+
+  border-top: 1px solid #1e293b;
+}
+
+
+.footer-bottom-content {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+}
+
+
+.footer-bottom p {
+  margin: 0;
+
+  color: #64748b;
+
+  font-size: 12px;
+}
+
+
+/* ========================================
+   BACK TO TOP
+======================================== */
+
+.footer-top-button {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 8px 12px;
+
+  border: 1px solid #334155;
+
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #94a3b8;
+
+  font-family: inherit;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+
+.footer-top-button:hover {
+  transform: translateY(-2px);
+
+  background: #1e293b;
+
+  border-color: #475569;
+
+  color: #ffffff;
+}
+
+
+/* ========================================
+   TABLET
+======================================== */
+
+@media (max-width: 950px) {
+
+  .footer {
+    padding: 65px 5% 25px;
+  }
+
+  .footer-container {
+    grid-template-columns: 1fr 1fr;
+
+    gap: 45px;
+  }
+
+  .footer-brand {
+    max-width: 100%;
+  }
+
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 600px) {
+
+  .footer {
+    padding: 55px 18px 20px;
+  }
+
+  .footer-container {
+    grid-template-columns: 1fr;
+
+    gap: 35px;
+  }
+
+  .footer-brand {
+    max-width: 100%;
+  }
+
+  .footer-brand-name {
+    font-size: 24px;
+  }
+
+  .footer-bottom {
+    margin-top: 40px;
+  }
+
+  .footer-bottom-content {
+    flex-direction: column;
+
+    align-items: center;
+
+    text-align: center;
+  }
+
+}
+
+
+/* ========================================
+   SMALL MOBILE
+======================================== */
+
+@media (max-width: 400px) {
+
+  .footer {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .footer-brand-description,
+  .footer-connect > p {
+    font-size: 13px;
+  }
+
+}

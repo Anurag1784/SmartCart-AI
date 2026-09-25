@@ -1,0 +1,943 @@
+/* ========================================
+   HERO SECTION
+======================================== */
+
+.hero {
+  position: relative;
+
+  min-height: 680px;
+
+  padding: 90px 6%;
+
+  display: flex;
+  align-items: center;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      120deg,
+      #dbeafe 0%,
+      #eff6ff 25%,
+      #f8fafc 52%,
+      #f5f3ff 76%,
+      #e0e7ff 100%
+    );
+}
+
+
+/* ========================================
+   BACKGROUND GLOW
+======================================== */
+
+.hero-glow {
+  position: absolute;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  filter: blur(10px);
+}
+
+.hero-glow-left {
+  width: 430px;
+  height: 430px;
+
+  top: -230px;
+  left: -180px;
+
+  background: rgba(96, 165, 250, 0.25);
+}
+
+.hero-glow-right {
+  width: 500px;
+  height: 500px;
+
+  right: -260px;
+  bottom: -280px;
+
+  background: rgba(129, 140, 248, 0.22);
+}
+
+
+/* ========================================
+   DECORATIVE DOTS
+======================================== */
+
+.hero-dots {
+  position: absolute;
+
+  display: grid;
+
+  grid-template-columns: repeat(3, 6px);
+
+  gap: 15px;
+
+  opacity: 0.45;
+
+  pointer-events: none;
+}
+
+.hero-dots-top {
+  top: 85px;
+  right: 55px;
+}
+
+.hero-dots span {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: #60a5fa;
+}
+
+
+/* ========================================
+   MAIN HERO CONTAINER
+======================================== */
+
+.hero-container {
+  position: relative;
+
+  z-index: 2;
+
+  width: 100%;
+
+  max-width: 1280px;
+
+  margin: 0 auto;
+
+  display: grid;
+
+  grid-template-columns: 1.05fr 0.95fr;
+
+  align-items: center;
+
+  gap: 70px;
+}
+
+
+/* ========================================
+   HERO CONTENT
+======================================== */
+
+.hero-content {
+  max-width: 650px;
+}
+
+
+/* ========================================
+   HERO LABEL
+======================================== */
+
+.hero-label {
+  width: fit-content;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  margin-bottom: 22px;
+
+  padding: 9px 15px;
+
+  border: 1px solid #bfdbfe;
+
+  border-radius: 30px;
+
+  background: rgba(255, 255, 255, 0.72);
+
+  color: #2563eb;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  letter-spacing: 1.3px;
+
+  box-shadow:
+    0 6px 20px rgba(37, 99, 235, 0.08);
+}
+
+
+/* ========================================
+   HERO HEADING
+======================================== */
+
+.hero h1 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 60px;
+
+  line-height: 1.08;
+
+  font-weight: 800;
+
+  letter-spacing: -1.5px;
+}
+
+.hero h1 span {
+  color: #2563eb;
+}
+
+
+/* ========================================
+   DESCRIPTION
+======================================== */
+
+.hero-description {
+  max-width: 610px;
+
+  margin: 25px 0 0;
+
+  color: #64748b;
+
+  font-size: 18px;
+
+  line-height: 1.75;
+}
+
+
+/* ========================================
+   HERO ACTIONS
+======================================== */
+
+.hero-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  margin-top: 34px;
+}
+
+
+/* ========================================
+   PRIMARY BUTTON
+======================================== */
+
+.hero-primary-button {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 9px;
+
+  padding: 14px 23px;
+
+  border: 1px solid #2563eb;
+
+  border-radius: 10px;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  text-decoration: none;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  box-shadow:
+    0 10px 24px rgba(37, 99, 235, 0.24);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.hero-primary-button:hover {
+  transform: translateY(-3px);
+
+  background: #1d4ed8;
+
+  box-shadow:
+    0 14px 28px rgba(37, 99, 235, 0.30);
+}
+
+
+/* ========================================
+   SECONDARY BUTTON
+======================================== */
+
+.hero-secondary-button {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 13px 23px;
+
+  border: 1px solid #2563eb;
+
+  border-radius: 10px;
+
+  background: rgba(255, 255, 255, 0.78);
+
+  color: #2563eb;
+
+  text-decoration: none;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.hero-secondary-button:hover {
+  transform: translateY(-3px);
+
+  background: #2563eb;
+
+  color: #ffffff;
+}
+
+
+/* ========================================
+   HERO TRUST ITEMS
+======================================== */
+
+.hero-trust {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 18px;
+
+  margin-top: 45px;
+
+  padding-top: 26px;
+
+  border-top: 1px solid rgba(148, 163, 184, 0.30);
+}
+
+
+.hero-trust-item {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  min-width: 0;
+}
+
+
+.hero-trust-icon {
+  width: 40px;
+  height: 40px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 11px;
+
+  background: #dbeafe;
+
+  color: #2563eb;
+}
+
+
+.hero-trust-item strong {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #0f172a;
+
+  font-size: 13px;
+
+  font-weight: 700;
+}
+
+
+.hero-trust-item span {
+  display: block;
+
+  color: #64748b;
+
+  font-size: 11px;
+
+  line-height: 1.4;
+}
+
+
+/* ========================================
+   RIGHT SIDE VISUAL
+======================================== */
+
+.hero-visual {
+  position: relative;
+
+  min-height: 470px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+}
+
+
+/* ========================================
+   VISUAL GLOW
+======================================== */
+
+.hero-visual-glow {
+  position: absolute;
+
+  width: 330px;
+  height: 330px;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(59, 130, 246, 0.22),
+      rgba(129, 140, 248, 0.18)
+    );
+
+  filter: blur(30px);
+}
+
+
+/* ========================================
+   MAIN AI CARD
+======================================== */
+
+.ai-card {
+  position: relative;
+
+  z-index: 2;
+
+  width: 410px;
+
+  padding: 28px;
+
+  border: 1px solid rgba(255, 255, 255, 0.85);
+
+  border-radius: 24px;
+
+  background: rgba(255, 255, 255, 0.88);
+
+  box-shadow:
+    0 25px 70px rgba(15, 23, 42, 0.14);
+
+  backdrop-filter: blur(15px);
+}
+
+
+/* ========================================
+   AI CARD HEADER
+======================================== */
+
+.ai-card-header {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding-bottom: 22px;
+
+  border-bottom: 1px solid #e2e8f0;
+}
+
+
+.ai-card-logo {
+  width: 46px;
+  height: 46px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 13px;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  box-shadow:
+    0 8px 18px rgba(37, 99, 235, 0.25);
+}
+
+
+.ai-card-header strong {
+  display: block;
+
+  color: #0f172a;
+
+  font-size: 16px;
+
+  font-weight: 800;
+}
+
+
+.ai-card-header span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #64748b;
+
+  font-size: 12px;
+}
+
+
+/* ========================================
+   AI MESSAGE
+======================================== */
+
+.ai-card-message {
+  padding: 27px 0 23px;
+}
+
+
+.ai-message-label {
+  margin: 0 0 9px;
+
+  color: #2563eb;
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  letter-spacing: 1.3px;
+}
+
+
+.ai-card-message h3 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 28px;
+
+  line-height: 1.2;
+
+  font-weight: 800;
+}
+
+
+.ai-card-message h3 span {
+  color: #2563eb;
+}
+
+
+.ai-card-message > p:last-child {
+  margin: 12px 0 0;
+
+  color: #64748b;
+
+  font-size: 14px;
+
+  line-height: 1.6;
+}
+
+
+/* ========================================
+   AI FEATURE LIST
+======================================== */
+
+.ai-feature-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+
+.ai-feature {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 13px;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 12px;
+
+  background: #f8fafc;
+}
+
+
+.ai-feature-icon {
+  width: 36px;
+  height: 36px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #dbeafe;
+
+  color: #2563eb;
+}
+
+
+.ai-feature strong {
+  display: block;
+
+  margin-bottom: 2px;
+
+  color: #0f172a;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+
+.ai-feature span {
+  display: block;
+
+  color: #64748b;
+
+  font-size: 11px;
+}
+
+
+/* ========================================
+   FLOATING CARDS
+======================================== */
+
+.hero-floating-card {
+  position: absolute;
+
+  z-index: 4;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 12px 15px;
+
+  border: 1px solid rgba(255, 255, 255, 0.9);
+
+  border-radius: 14px;
+
+  background: rgba(255, 255, 255, 0.92);
+
+  box-shadow:
+    0 15px 35px rgba(15, 23, 42, 0.13);
+
+  backdrop-filter: blur(12px);
+}
+
+
+/* ========================================
+   TOP FLOATING CARD
+======================================== */
+
+.hero-floating-card-top {
+  top: 45px;
+
+  right: 0;
+}
+
+
+/* ========================================
+   BOTTOM FLOATING CARD
+======================================== */
+
+/*
+   Keep the Secure Platform card outside
+   the main AI card so it does not cover
+   the Simple Shopping row.
+*/
+
+.hero-floating-card-bottom {
+  bottom: -25px;
+
+  left: -35px;
+}
+
+
+/* ========================================
+   FLOATING CARD ICON
+======================================== */
+
+.floating-icon {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background: #dbeafe;
+
+  color: #2563eb;
+}
+
+
+.hero-floating-card strong {
+  display: block;
+
+  margin-bottom: 2px;
+
+  color: #0f172a;
+
+  font-size: 12px;
+}
+
+
+.hero-floating-card span {
+  display: block;
+
+  color: #64748b;
+
+  font-size: 10px;
+}
+
+
+/* ========================================
+   TABLET
+======================================== */
+
+@media (max-width: 1050px) {
+
+  .hero {
+    padding: 80px 5%;
+  }
+
+  .hero-container {
+    grid-template-columns: 1fr;
+
+    gap: 60px;
+
+    text-align: center;
+  }
+
+  .hero-content {
+    max-width: 800px;
+
+    margin: 0 auto;
+  }
+
+  .hero-label {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-description {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-actions {
+    justify-content: center;
+  }
+
+  .hero-trust {
+    max-width: 700px;
+
+    margin-left: auto;
+    margin-right: auto;
+
+    text-align: left;
+  }
+
+  .hero-visual {
+    min-height: 440px;
+  }
+
+  /*
+     On tablet, keep the bottom floating card
+     closer to the main card but still outside it.
+  */
+  .hero-floating-card-bottom {
+    bottom: -20px;
+
+    left: 0;
+  }
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 650px) {
+
+  .hero {
+    min-height: auto;
+
+    padding: 70px 18px 65px;
+  }
+
+  .hero-dots {
+    display: none;
+  }
+
+  .hero-glow-left {
+    width: 280px;
+    height: 280px;
+
+    top: -150px;
+    left: -150px;
+  }
+
+  .hero-glow-right {
+    width: 300px;
+    height: 300px;
+
+    right: -160px;
+    bottom: -150px;
+  }
+
+  .hero-container {
+    gap: 50px;
+  }
+
+  .hero-label {
+    font-size: 10px;
+
+    letter-spacing: 0.9px;
+  }
+
+  .hero h1 {
+    font-size: 40px;
+
+    letter-spacing: -0.8px;
+  }
+
+  .hero-description {
+    font-size: 16px;
+
+    line-height: 1.65;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+
+    width: 100%;
+  }
+
+  .hero-primary-button,
+  .hero-secondary-button {
+    width: 100%;
+
+    max-width: 300px;
+  }
+
+  .hero-trust {
+    grid-template-columns: 1fr;
+
+    gap: 14px;
+
+    max-width: 330px;
+
+    margin-top: 38px;
+
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-visual {
+    min-height: 400px;
+  }
+
+  .ai-card {
+    width: 100%;
+
+    max-width: 360px;
+
+    padding: 22px;
+  }
+
+  .ai-card-message h3 {
+    font-size: 24px;
+  }
+
+  .hero-floating-card-top {
+    top: 15px;
+
+    right: -5px;
+  }
+
+  /*
+     Mobile: place Secure Platform
+     clearly below/away from the AI card.
+  */
+  .hero-floating-card-bottom {
+    bottom: -18px;
+
+    left: 0;
+  }
+
+}
+
+
+/* ========================================
+   SMALL MOBILE
+======================================== */
+
+@media (max-width: 430px) {
+
+  .hero h1 {
+    font-size: 35px;
+  }
+
+  .hero-label {
+    padding: 8px 11px;
+  }
+
+  .hero-floating-card {
+    padding: 9px 11px;
+  }
+
+  .hero-floating-card strong {
+    font-size: 10px;
+  }
+
+  .hero-floating-card span {
+    font-size: 9px;
+  }
+
+  .ai-card {
+    max-width: 330px;
+  }
+
+}

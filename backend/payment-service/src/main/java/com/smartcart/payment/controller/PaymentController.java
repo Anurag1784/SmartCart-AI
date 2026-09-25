@@ -39,6 +39,31 @@ public class PaymentController {
     }
 
     // =========================================================
+    // VERIFY RAZORPAY PAYMENT
+    // =========================================================
+
+    @PostMapping("/verify")
+    public ResponseEntity<PaymentResponse> verifyRazorpayPayment(
+            @RequestParam("razorpay_order_id")
+            String razorpayOrderId,
+
+            @RequestParam("razorpay_payment_id")
+            String razorpayPaymentId,
+
+            @RequestParam("razorpay_signature")
+            String razorpaySignature) {
+
+        PaymentResponse response =
+                paymentService.verifyRazorpayPayment(
+                        razorpayOrderId,
+                        razorpayPaymentId,
+                        razorpaySignature
+                );
+
+        return ResponseEntity.ok(response);
+    }
+
+    // =========================================================
     // PROCESS PAYMENT
     // =========================================================
 
