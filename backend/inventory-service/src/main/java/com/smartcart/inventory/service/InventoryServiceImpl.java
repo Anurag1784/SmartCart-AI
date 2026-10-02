@@ -8,10 +8,12 @@ import com.smartcart.inventory.exception.InsufficientStockException;
 import com.smartcart.inventory.exception.InvalidQuantityException;
 import com.smartcart.inventory.exception.InventoryNotFoundException;
 import com.smartcart.inventory.repository.InventoryRepository;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Transactional
@@ -22,6 +24,10 @@ public class InventoryServiceImpl implements InventoryService {
     public InventoryServiceImpl(InventoryRepository inventoryRepository) {
         this.inventoryRepository = inventoryRepository;
     }
+
+    // =========================================================
+    // CREATE INVENTORY
+    // =========================================================
 
     @Override
     public InventoryResponse createInventory(InventoryRequest request) {
@@ -46,24 +52,69 @@ public class InventoryServiceImpl implements InventoryService {
         inventory.setReorderLevel(request.getReorderLevel());
         inventory.setUpdatedAt(LocalDateTime.now());
 
-        Inventory savedInventory = inventoryRepository.save(inventory);
+        Inventory savedInventory =
+                inventoryRepository.save(inventory);
 
         return mapToResponse(savedInventory);
     }
+
+
+    // =========================================================
+    // GET INVENTORY BY PRODUCT ID
+    // =========================================================
 
     @Override
     @Transactional(readOnly = true)
     public InventoryResponse getInventoryByProductId(Long productId) {
 
-        Inventory inventory = findInventoryByProductId(productId);
+        Inventory inventory =
+                findInventoryByProductId(productId);
 
         return mapToResponse(inventory);
     }
 
-    @Override
-    public InventoryResponse updateInventory(Long productId, InventoryRequest request) {
 
-        Inventory inventory = findInventoryByProductId(productId);
+    // =========================================================
+    // GET LOW-STOCK INVENTORY
+    // =========================================================
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<InventoryResponse> getLowStockInventory() {
+
+        return inventoryRepository.findLowStockInventory()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+
+    // =========================================================
+    // ADMIN - GET ALL INVENTORY
+    // =========================================================
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<InventoryResponse> getAllInventory() {
+
+        return inventoryRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+
+    // =========================================================
+    // UPDATE INVENTORY
+    // =========================================================
+
+    @Override
+    public InventoryResponse updateInventory(
+            Long productId,
+            InventoryRequest request) {
+
+        Inventory inventory =
+                findInventoryByProductId(productId);
 
         if (!productId.equals(request.getProductId())) {
             throw new InvalidQuantityException(
@@ -71,50 +122,85 @@ public class InventoryServiceImpl implements InventoryService {
             );
         }
 
-        if (request.getReservedQuantity() > request.getAvailableQuantity()) {
+        if (request.getReservedQuantity() >
+                request.getAvailableQuantity()) {
+
             throw new InvalidQuantityException(
                     "Reserved quantity cannot be greater than available quantity"
             );
         }
 
-        inventory.setAvailableQuantity(request.getAvailableQuantity());
-        inventory.setReservedQuantity(request.getReservedQuantity());
-        inventory.setReorderLevel(request.getReorderLevel());
-        inventory.setUpdatedAt(LocalDateTime.now());
+        inventory.setAvailableQuantity(
+                request.getAvailableQuantity()
+        );
 
-        Inventory updatedInventory = inventoryRepository.save(inventory);
+        inventory.setReservedQuantity(
+                request.getReservedQuantity()
+        );
+
+        inventory.setReorderLevel(
+                request.getReorderLevel()
+        );
+
+        inventory.setUpdatedAt(
+                LocalDateTime.now()
+        );
+
+        Inventory updatedInventory =
+                inventoryRepository.save(inventory);
 
         return mapToResponse(updatedInventory);
     }
 
+
+    // =========================================================
+    // INCREASE STOCK
+    // =========================================================
+
     @Override
-    public InventoryResponse increaseStock(Long productId, Integer quantity) {
+    public InventoryResponse increaseStock(
+            Long productId,
+            Integer quantity) {
 
         validateQuantity(quantity);
 
-        Inventory inventory = findInventoryByProductId(productId);
+        Inventory inventory =
+                findInventoryByProductId(productId);
 
         inventory.setAvailableQuantity(
                 inventory.getAvailableQuantity() + quantity
         );
 
-        inventory.setUpdatedAt(LocalDateTime.now());
+        inventory.setUpdatedAt(
+                LocalDateTime.now()
+        );
 
-        Inventory updatedInventory = inventoryRepository.save(inventory);
+        Inventory updatedInventory =
+                inventoryRepository.save(inventory);
 
         return mapToResponse(updatedInventory);
     }
 
+
+    // =========================================================
+    // DECREASE STOCK
+    // =========================================================
+
     @Override
-    public InventoryResponse decreaseStock(Long productId, Integer quantity) {
+    public InventoryResponse decreaseStock(
+            Long productId,
+            Integer quantity) {
 
         validateQuantity(quantity);
 
-        Inventory inventory = findInventoryByProductId(productId);
+        Inventory inventory =
+                findInventoryByProductId(productId);
 
         if (quantity > inventory.getAvailableQuantity()) {
+
             throw new InsufficientStockException(
-                    "Insufficient available stock for product ID: " + productId
+                    "Insufficient available stock for product ID: "
+                            + productId
             );
         }
 
@@ -122,23 +208,36 @@ public class InventoryServiceImpl implements InventoryService {
                 inventory.getAvailableQuantity() - quantity
         );
 
-        inventory.setUpdatedAt(LocalDateTime.now());
+        inventory.setUpdatedAt(
+                LocalDateTime.now()
+        );
 
-        Inventory updatedInventory = inventoryRepository.save(inventory);
+        Inventory updatedInventory =
+                inventoryRepository.save(inventory);
 
         return mapToResponse(updatedInventory);
     }
 
+
+    // =========================================================
+    // RESERVE STOCK
+    // =========================================================
+
     @Override
-    public InventoryResponse reserveStock(Long productId, Integer quantity) {
+    public InventoryResponse reserveStock(
+            Long productId,
+            Integer quantity) {
 
         validateQuantity(quantity);
 
-        Inventory inventory = findInventoryByProductId(productId);
+        Inventory inventory =
+                findInventoryByProductId(productId);
 
         if (quantity > inventory.getAvailableQuantity()) {
+
             throw new InsufficientStockException(
-                    "Insufficient available stock for product ID: " + productId
+                    "Insufficient available stock for product ID: "
+                            + productId
             );
         }
 
@@ -150,21 +249,33 @@ public class InventoryServiceImpl implements InventoryService {
                 inventory.getReservedQuantity() + quantity
         );
 
-        inventory.setUpdatedAt(LocalDateTime.now());
+        inventory.setUpdatedAt(
+                LocalDateTime.now()
+        );
 
-        Inventory updatedInventory = inventoryRepository.save(inventory);
+        Inventory updatedInventory =
+                inventoryRepository.save(inventory);
 
         return mapToResponse(updatedInventory);
     }
 
+
+    // =========================================================
+    // RELEASE RESERVED STOCK
+    // =========================================================
+
     @Override
-    public InventoryResponse releaseStock(Long productId, Integer quantity) {
+    public InventoryResponse releaseStock(
+            Long productId,
+            Integer quantity) {
 
         validateQuantity(quantity);
 
-        Inventory inventory = findInventoryByProductId(productId);
+        Inventory inventory =
+                findInventoryByProductId(productId);
 
         if (quantity > inventory.getReservedQuantity()) {
+
             throw new InvalidQuantityException(
                     "Release quantity cannot be greater than reserved quantity"
             );
@@ -178,23 +289,41 @@ public class InventoryServiceImpl implements InventoryService {
                 inventory.getAvailableQuantity() + quantity
         );
 
-        inventory.setUpdatedAt(LocalDateTime.now());
+        inventory.setUpdatedAt(
+                LocalDateTime.now()
+        );
 
-        Inventory updatedInventory = inventoryRepository.save(inventory);
+        InventoryResponse response =
+                mapToResponse(inventory);
 
-        return mapToResponse(updatedInventory);
+        inventoryRepository.save(inventory);
+
+        return response;
     }
+
+
+    // =========================================================
+    // CHECK STOCK AVAILABILITY
+    // =========================================================
 
     @Override
     @Transactional(readOnly = true)
-    public boolean checkAvailability(Long productId, Integer quantity) {
+    public boolean checkAvailability(
+            Long productId,
+            Integer quantity) {
 
         validateQuantity(quantity);
 
-        Inventory inventory = findInventoryByProductId(productId);
+        Inventory inventory =
+                findInventoryByProductId(productId);
 
         return inventory.getAvailableQuantity() >= quantity;
     }
+
+
+    // =========================================================
+    // DELETE INVENTORY
+    // =========================================================
 
     // Deletes the inventory record belonging to the given product.
     @Override
@@ -202,8 +331,10 @@ public class InventoryServiceImpl implements InventoryService {
 
         // Check whether inventory actually exists before deleting it.
         if (!inventoryRepository.existsByProductId(productId)) {
+
             throw new InventoryNotFoundException(
-                    "Inventory not found for product ID: " + productId
+                    "Inventory not found for product ID: "
+                            + productId
             );
         }
 
@@ -211,24 +342,44 @@ public class InventoryServiceImpl implements InventoryService {
         inventoryRepository.deleteByProductId(productId);
     }
 
+
+    // =========================================================
+    // FIND INVENTORY BY PRODUCT ID
+    // =========================================================
+
     private Inventory findInventoryByProductId(Long productId) {
 
         return inventoryRepository.findByProductId(productId)
-                .orElseThrow(() -> new InventoryNotFoundException(
-                        "Inventory not found for product ID: " + productId
-                ));
+                .orElseThrow(() ->
+                        new InventoryNotFoundException(
+                                "Inventory not found for product ID: "
+                                        + productId
+                        )
+                );
     }
+
+
+    // =========================================================
+    // VALIDATE QUANTITY
+    // =========================================================
 
     private void validateQuantity(Integer quantity) {
 
         if (quantity == null || quantity <= 0) {
+
             throw new InvalidQuantityException(
                     "Quantity must be greater than 0"
             );
         }
     }
 
-    private InventoryResponse mapToResponse(Inventory inventory) {
+
+    // =========================================================
+    // MAP ENTITY → RESPONSE
+    // =========================================================
+
+    private InventoryResponse mapToResponse(
+            Inventory inventory) {
 
         return new InventoryResponse(
                 inventory.getInventoryId(),

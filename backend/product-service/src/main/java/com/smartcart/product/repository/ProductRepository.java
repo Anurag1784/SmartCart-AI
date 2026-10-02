@@ -78,4 +78,30 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
      * React.
      */
     List<Product> findBySellerId(Long sellerId);
+    
+    // =========================================================
+    // CHECK WHETHER PRODUCTS USE A CATEGORY
+    // =========================================================
+
+    /*
+     * This method checks whether at least one product
+     * is currently assigned to the specified category.
+     *
+     * Spring Data JPA understands:
+     *
+     * existsByCategory_CategoryId(categoryId)
+     *              ↓
+     * product.category.categoryId = ?
+     *
+     * This will be used before deleting a category.
+     *
+     * If a product is using the category:
+     *
+     *     true  → category should NOT be deleted
+     *
+     * If no product is using the category:
+     *
+     *     false → category can be deleted
+     */
+    boolean existsByCategory_CategoryId(Long categoryId);
 }

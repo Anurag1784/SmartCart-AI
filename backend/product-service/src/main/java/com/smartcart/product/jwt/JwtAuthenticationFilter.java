@@ -31,6 +31,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain)
             throws ServletException, IOException {
 
+        // =========================================================
+        // READ AUTHORIZATION HEADER
+        // =========================================================
+
         // Read the Authorization header sent by the frontend.
         String authorizationHeader =
                 request.getHeader("Authorization");
@@ -43,21 +47,48 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+        // =========================================================
+        // EXTRACT JWT
+        // =========================================================
+
         // Remove "Bearer " and keep only the actual JWT.
         String token = authorizationHeader.substring(7);
 
         try {
 
+            // =====================================================
+            // EXTRACT EMAIL
+            // =====================================================
+
             // Extract the email from the JWT subject.
-            String email = jwtService.extractEmail(token);
+            String email =
+                    jwtService.extractEmail(token);
+
+
+            // =====================================================
+            // EXTRACT ROLE
+            // =====================================================
 
             // Extract the user's role from the JWT.
-            String role = jwtService.extractRole(token);
+            String role =
+                    jwtService.extractRole(token);
 
-            // NEW:
-            // Extract the authenticated user's database ID
-            // from the "userId" JWT claim.
-            Long userId = jwtService.extractUserId(token);
+
+            // =====================================================
+            // EXTRACT USER ID
+            // =====================================================
+
+            /*
+             * Extract the authenticated user's database ID
+             * from the "userId" JWT claim.
+             */
+            Long userId =
+                    jwtService.extractUserId(token);
+
+
+            // =====================================================
+            // VALIDATE JWT
+            // =====================================================
 
             /*
              * Only create Authentication when:
@@ -73,16 +104,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             .getAuthentication() == null &&
                     jwtService.isTokenValid(token, email)) {
 
+                // =================================================
+                // CREATE SPRING SECURITY AUTHENTICATION
+                // =================================================
+
                 /*
                  * The principal is now the authenticated user's ID.
                  *
-                 * Later ProductService can retrieve it using:
+                 * The role becomes:
                  *
-                 * SecurityContextHolder
-                 *     .getContext()
-                 *     .getAuthentication()
-                 *
-                 * and compare it with Product.sellerId.
+                 * SELLER  → ROLE_SELLER
+                 * CUSTOMER → ROLE_CUSTOMER
+                 * ADMIN    → ROLE_ADMIN
                  */
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
@@ -95,23 +128,40 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                 )
                         );
 
+
+                // =================================================
+                // STORE REQUEST DETAILS
+                // =================================================
+
                 // Store request-specific authentication details.
                 authentication.setDetails(
                         new WebAuthenticationDetailsSource()
                                 .buildDetails(request)
                 );
 
-                // Put the authenticated user into Spring Security's context.
+
+                // =================================================
+                // STORE AUTHENTICATION
+                // =================================================
+
+                // Put the authenticated user into
+                // Spring Security's SecurityContext.
                 SecurityContextHolder.getContext()
                         .setAuthentication(authentication);
             }
 
         } catch (Exception exception) {
 
-            // If the JWT is invalid or cannot be parsed,
-            // remove any authentication from the security context.
+            /*
+             * If the JWT is invalid or cannot be parsed,
+             * remove any authentication from the security context.
+             */
             SecurityContextHolder.clearContext();
         }
+
+        // =========================================================
+        // CONTINUE REQUEST
+        // =========================================================
 
         // Continue processing the request.
         filterChain.doFilter(request, response);

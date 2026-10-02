@@ -11,6 +11,8 @@ import com.smartcart.payment.entity.Payment;
 import com.smartcart.payment.enums.PaymentStatus;
 import com.smartcart.payment.repository.PaymentRepository;
 
+import java.math.BigDecimal;
+
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -441,6 +443,36 @@ public class PaymentService {
 
         return mapToResponse(payment);
     }
+    
+    // =========================================================
+    // ADMIN - PAYMENT STATISTICS
+    // =========================================================
+
+    public long countSuccessfulPayments() {
+
+        return paymentRepository.countByPaymentStatus(
+                PaymentStatus.SUCCESS
+        );
+    }
+
+    public BigDecimal getTotalRevenue() {
+
+        return paymentRepository.sumAmountByPaymentStatus(
+                PaymentStatus.SUCCESS
+        );
+    }
+ // =========================================================
+ // ADMIN - GET ALL PAYMENTS
+ // =========================================================
+
+ @Transactional(readOnly = true)
+ public java.util.List<PaymentResponse> getAllPayments() {
+
+     return paymentRepository.findAll()
+             .stream()
+             .map(this::mapToResponse)
+             .toList();
+ }
 
     // =========================================================
     // MAP ENTITY → RESPONSE

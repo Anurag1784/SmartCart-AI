@@ -113,6 +113,32 @@ public class OrderController {
                 orderService.getOrderById(orderId)
         );
     }
+    
+    
+         // =========================================================
+        // GET TOTAL ORDER COUNT
+       // =========================================================
+
+        @GetMapping("/count")
+         public ResponseEntity<Long> getTotalOrderCount() {
+
+             return ResponseEntity.ok(
+             orderService.countOrders()
+         );
+       }
+        
+        
+     // =========================================================
+     // GET ALL ORDERS
+     // =========================================================
+
+     @GetMapping
+     public ResponseEntity<List<Order>> getAllOrders() {
+
+         return ResponseEntity.ok(
+             orderService.getAllOrders()
+         );
+     }
 
     // =========================================================
     // GET ORDERS BY CUSTOMER

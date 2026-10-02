@@ -1,0 +1,112 @@
+:root {
+  /* ========================================
+     SmartCart AI Admin - Color System
+     ======================================== */
+
+  /* Main Backgrounds */
+  --admin-bg: #f5f7fb;
+  --admin-surface: #ffffff;
+  --admin-surface-soft: #f8fafc;
+
+  /* Primary Brand */
+  --admin-primary: #2563eb;
+  --admin-primary-dark: #1d4ed8;
+  --admin-primary-soft: #eff6ff;
+
+  /* Text */
+  --admin-text: #111827;
+  --admin-text-secondary: #64748b;
+  --admin-text-muted: #94a3b8;
+
+  /* Borders */
+  --admin-border: #e2e8f0;
+
+  /* ========================================
+     Semantic Colors
+     ======================================== */
+
+  /* Success */
+  --admin-success: #16a34a;
+  --admin-success-soft: #f0fdf4;
+
+  /* Warning */
+  --admin-warning: #d97706;
+  --admin-warning-soft: #fffbeb;
+
+  /* Danger */
+  --admin-danger: #dc2626;
+  --admin-danger-soft: #fef2f2;
+
+  /* Information */
+  --admin-info: #0891b2;
+  --admin-info-soft: #ecfeff;
+
+  /* ========================================
+     Sidebar
+     ======================================== */
+
+  --sidebar-bg: #111827;
+  --sidebar-text: #cbd5e1;
+  --sidebar-text-active: #ffffff;
+  --sidebar-active-bg: #1e40af;
+  --sidebar-hover-bg: #1f2937;
+
+  /* ========================================
+     Typography
+     ======================================== */
+
+  --font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+
+  /* ========================================
+     Border Radius
+     ======================================== */
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+
+  /* ========================================
+     Shadows
+     ======================================== */
+
+  --shadow-sm:
+    0 1px 2px rgba(15, 23, 42, 0.05);
+
+  --shadow-md:
+    0 4px 12px rgba(15, 23, 42, 0.08);
+
+  --shadow-lg:
+    0 10px 30px rgba(15, 23, 42, 0.10);
+
+  /* ========================================
+     Admin Layout
+     ======================================== */
+
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 76px;
+  --topbar-height: 72px;
+
+  /* ========================================
+     Transitions
+     ======================================== */
+
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+  --transition-slow: 0.35s ease;
+}

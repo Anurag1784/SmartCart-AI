@@ -1,6 +1,7 @@
 package com.smartcart.inventory.service;
 
 import com.smartcart.inventory.dto.InventoryRequest;
+import java.util.List;
 import com.smartcart.inventory.dto.InventoryResponse;
 
 public interface InventoryService {
@@ -31,4 +32,16 @@ public interface InventoryService {
 
     // Deletes inventory belonging to a product.
     void deleteInventoryByProductId(Long productId);
+    
+ // =========================================================
+ // GET LOW-STOCK INVENTORY
+ // =========================================================
+
+ List<InventoryResponse> getLowStockInventory();
+ 
+//=========================================================
+//ADMIN - GET ALL INVENTORY
+//=========================================================
+
+  List<InventoryResponse> getAllInventory();
 }

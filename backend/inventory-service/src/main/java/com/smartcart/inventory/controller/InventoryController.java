@@ -4,6 +4,9 @@ import com.smartcart.inventory.dto.InventoryRequest;
 import com.smartcart.inventory.dto.InventoryResponse;
 import com.smartcart.inventory.service.InventoryService;
 import jakarta.validation.Valid;
+
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -124,4 +127,31 @@ public class InventoryController {
         // 204 means the deletion was successful and there is no response body.
         return ResponseEntity.noContent().build();
     }
-}
+    
+    
+    // =========================================================
+    // GET LOW-STOCK INVENTORY
+    // =========================================================
+
+    @GetMapping("/low-stock")
+    public ResponseEntity<List<InventoryResponse>> getLowStockInventory() {
+
+        List<InventoryResponse> response =
+                inventoryService.getLowStockInventory();
+
+        return ResponseEntity.ok(response);
+    }
+    
+ // =========================================================
+ // ADMIN - GET ALL INVENTORY
+ // =========================================================
+
+   @GetMapping
+   public ResponseEntity<List<InventoryResponse>> getAllInventory() {
+
+      List<InventoryResponse> response =
+             inventoryService.getAllInventory();
+ 
+      return ResponseEntity.ok(response);
+    }
+   }

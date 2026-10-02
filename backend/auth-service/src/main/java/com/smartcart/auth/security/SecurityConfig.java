@@ -2,6 +2,7 @@ package com.smartcart.auth.security;
 
 import java.util.List;
 
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -19,8 +20,9 @@ import com.smartcart.auth.jwt.JwtAuthenticationFilter;
 import com.smartcart.auth.repository.UserRepository;
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
-
+	
     @Bean
     public PasswordEncoder passwordEncoder() {
 

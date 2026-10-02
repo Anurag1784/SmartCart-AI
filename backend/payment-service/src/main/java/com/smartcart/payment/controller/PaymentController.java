@@ -6,6 +6,9 @@ import com.smartcart.payment.service.PaymentService;
 
 import jakarta.validation.Valid;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -118,4 +121,36 @@ public class PaymentController {
                 paymentService.getPaymentByOrderId(orderId)
         );
     }
+    
+    // =========================================================
+    // ADMIN - PAYMENT STATISTICS
+    // =========================================================
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> getSuccessfulPaymentCount() {
+
+        return ResponseEntity.ok(
+                paymentService.countSuccessfulPayments()
+        );
+    }
+
+    @GetMapping("/revenue")
+    public ResponseEntity<BigDecimal> getTotalRevenue() {
+
+        return ResponseEntity.ok(
+                paymentService.getTotalRevenue()
+        );
+    }
+    
+ // =========================================================
+ // ADMIN - GET ALL PAYMENTS
+ // =========================================================
+
+   @GetMapping
+   public ResponseEntity<List<PaymentResponse>> getAllPayments() {
+
+     return ResponseEntity.ok(
+             paymentService.getAllPayments()
+     );
+   }
 }

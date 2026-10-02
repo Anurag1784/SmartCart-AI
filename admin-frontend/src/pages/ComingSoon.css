@@ -1,0 +1,82 @@
+.coming-soon-page {
+  min-height: calc(100vh - 72px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+
+  background: var(--bg-page, #f6f8fb);
+
+  box-sizing: border-box;
+}
+
+.coming-soon-card {
+  width: min(100%, 520px);
+
+  padding: 45px 35px;
+
+  text-align: center;
+
+  background: #ffffff;
+
+  border: 1px solid var(--border, #e7ebf0);
+  border-radius: 16px;
+
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+}
+
+.coming-soon-icon {
+  width: 64px;
+  height: 64px;
+
+  margin: 0 auto 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 14px;
+
+  background: #edf2f8;
+  color: #1d3557;
+}
+
+.coming-soon-card h1 {
+  margin: 0 0 10px;
+
+  color: var(--text-primary, #172033);
+
+  font-size: 24px;
+  font-weight: 750;
+}
+
+.coming-soon-card p {
+  margin: 0 auto 22px;
+
+  max-width: 420px;
+
+  color: var(--text-secondary, #6b7280);
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.coming-soon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 7px 12px;
+
+  border-radius: 20px;
+
+  background: #f1f4f7;
+  color: #687282;
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}

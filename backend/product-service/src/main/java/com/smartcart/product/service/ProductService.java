@@ -171,6 +171,19 @@ public class ProductService {
         return productRepository.findAll();
 
     }
+    
+ // =========================================================
+ // GET TOTAL PRODUCT COUNT
+ // =========================================================
+
+ public long getTotalProductCount() {
+
+     // JpaRepository already provides the count() method.
+     //
+     // It directly counts the number of Product records
+     // in the Product Service database.
+     return productRepository.count();
+ }
 
     // =========================================================
     // GET PRODUCTS BY SELLER

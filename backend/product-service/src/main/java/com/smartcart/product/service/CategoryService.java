@@ -8,16 +8,21 @@ import org.springframework.stereotype.Service;
 import com.smartcart.product.entity.Category;
 import com.smartcart.product.exception.CategoryNotFoundException;
 import com.smartcart.product.repository.CategoryRepository;
+import com.smartcart.product.repository.ProductRepository;
 
 @Service
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
 
-    public CategoryService(CategoryRepository categoryRepository) {
+    public CategoryService(
+            CategoryRepository categoryRepository,
+            ProductRepository productRepository) {
+
         this.categoryRepository = categoryRepository;
+        this.productRepository = productRepository;
     }
-
     // =========================================================
     // CREATE CATEGORY
     // =========================================================
@@ -90,15 +95,45 @@ public class CategoryService {
         return categoryRepository.save(existingCategory);
     }
 
-    // =========================================================
-    // DELETE CATEGORY
-    // =========================================================
+ // =========================================================
+ // DELETE CATEGORY
+ // =========================================================
 
-    public void deleteCategory(Long categoryId) {
+ public void deleteCategory(Long categoryId) {
 
-        Category category =
-                getCategoryById(categoryId);
+     // ---------------------------------------------------------
+     // STEP 1: Check whether the category actually exists.
+     // ---------------------------------------------------------
 
-        categoryRepository.delete(category);
-    }
+     Category category = getCategoryById(categoryId);
+
+
+     // ---------------------------------------------------------
+     // STEP 2: Check whether any product is using this category.
+     //
+     // ProductRepository checks:
+     //
+     // product.category.categoryId = categoryId
+     //
+     // If at least one product uses this category,
+     // deletion must be prevented.
+     // ---------------------------------------------------------
+
+     if (productRepository.existsByCategory_CategoryId(categoryId)) {
+
+         throw new RuntimeException(
+                 "Cannot delete category because products are using it: "
+                         + category.getCategoryName()
+         );
+     }
+
+
+     // ---------------------------------------------------------
+     // STEP 3: No products are using the category.
+     //
+     // Therefore, it is safe to delete the category.
+     // ---------------------------------------------------------
+
+     categoryRepository.delete(category);
+ }
 }

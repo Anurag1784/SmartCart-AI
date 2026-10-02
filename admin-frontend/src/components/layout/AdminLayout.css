@@ -1,0 +1,325 @@
+/* ========================================
+   SmartCart AI Admin - Main Layout
+   ======================================== */
+
+.admin-layout {
+  min-height: 100vh;
+  background: var(--admin-bg);
+}
+
+.admin-main {
+  min-height: 100vh;
+  margin-left: var(--sidebar-width);
+}
+
+.admin-content {
+  min-height: calc(100vh - var(--topbar-height));
+  padding: 28px;
+}
+
+/* ========================================
+   Responsive
+   ======================================== */
+
+@media (max-width: 900px) {
+  .admin-main {
+    margin-left: 220px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-main {
+    margin-left: var(--sidebar-collapsed-width);
+  }
+
+  .admin-content {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-content {
+    padding: 16px;
+  }
+}
+/* ============================================================
+   ADMIN LOGOUT CONFIRMATION MODAL
+   ============================================================ */
+
+.admin-logout-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  background: rgba(15, 23, 42, 0.48);
+
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.admin-logout-modal {
+  position: relative;
+
+  width: min(440px, 100%);
+
+  padding: 32px;
+
+  background: var(--admin-surface, #ffffff);
+
+  border: 1px solid var(--admin-border, #e2e8f0);
+
+  border-radius: 20px;
+
+  box-shadow:
+    0 24px 70px rgba(15, 23, 42, 0.22),
+    0 8px 24px rgba(15, 23, 42, 0.08);
+
+  animation: adminLogoutModalIn 0.2s ease-out;
+}
+
+@keyframes adminLogoutModalIn {
+
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+}
+
+
+/* Close button */
+
+.admin-logout-close {
+  position: absolute;
+
+  top: 16px;
+  right: 16px;
+
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 9px;
+
+  background: transparent;
+
+  color: var(--admin-text-muted, #64748b);
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.admin-logout-close:hover {
+  background: var(--admin-surface-soft, #f1f5f9);
+
+  color: var(--admin-text, #0f172a);
+}
+
+
+/* Icon */
+
+.admin-logout-icon {
+  width: 52px;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 20px;
+
+  border-radius: 14px;
+
+  background: #fff1f2;
+
+  color: #dc2626;
+}
+
+
+/* Content */
+
+.admin-logout-content {
+  padding-right: 24px;
+}
+
+.admin-logout-eyebrow {
+  display: block;
+
+  margin-bottom: 7px;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  letter-spacing: 0.12em;
+
+  color: var(--admin-text-muted, #64748b);
+}
+
+.admin-logout-content h2 {
+  margin: 0 0 10px;
+
+  font-size: 22px;
+  line-height: 1.25;
+
+  color: var(--admin-text, #0f172a);
+}
+
+.admin-logout-content p {
+  margin: 0;
+
+  font-size: 14px;
+  line-height: 1.65;
+
+  color: var(--admin-text-secondary, #64748b);
+}
+
+
+/* Actions */
+
+.admin-logout-actions {
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  margin-top: 28px;
+}
+
+.admin-logout-cancel,
+.admin-logout-confirm {
+  min-height: 42px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 0 16px;
+
+  border-radius: 10px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.admin-logout-cancel {
+  border: 1px solid var(--admin-border, #e2e8f0);
+
+  background: var(--admin-surface, #ffffff);
+
+  color: var(--admin-text-secondary, #475569);
+}
+
+.admin-logout-cancel:hover {
+  background: var(--admin-surface-soft, #f8fafc);
+}
+
+.admin-logout-confirm {
+  border: 1px solid #dc2626;
+
+  background: #dc2626;
+
+  color: #ffffff;
+}
+
+.admin-logout-confirm:hover {
+  background: #b91c1c;
+
+  border-color: #b91c1c;
+
+  transform: translateY(-1px);
+}
+
+
+/* ============================================================
+   DARK THEME
+   ============================================================ */
+
+:root[data-theme='dark'] .admin-logout-modal {
+  background: #111827;
+
+  border-color: #263244;
+
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.45),
+    0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+:root[data-theme='dark'] .admin-logout-close:hover {
+  background: #1f2937;
+
+  color: #f8fafc;
+}
+
+:root[data-theme='dark'] .admin-logout-content h2 {
+  color: #f8fafc;
+}
+
+:root[data-theme='dark'] .admin-logout-content p {
+  color: #94a3b8;
+}
+
+:root[data-theme='dark'] .admin-logout-cancel {
+  background: #111827;
+
+  border-color: #334155;
+
+  color: #cbd5e1;
+}
+
+:root[data-theme='dark'] .admin-logout-cancel:hover {
+  background: #1f2937;
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 520px) {
+
+  .admin-logout-overlay {
+    padding: 16px;
+  }
+
+  .admin-logout-modal {
+    padding: 26px 22px;
+  }
+
+  .admin-logout-actions {
+    flex-direction: column-reverse;
+  }
+
+  .admin-logout-cancel,
+  .admin-logout-confirm {
+    width: 100%;
+  }
+
+}

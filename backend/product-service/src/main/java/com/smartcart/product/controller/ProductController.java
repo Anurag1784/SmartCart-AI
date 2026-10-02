@@ -213,6 +213,21 @@ public class ProductController {
         return ResponseEntity.ok(
                 productService.getAllProducts());
     }
+    
+ // =========================================================
+ // GET TOTAL PRODUCT COUNT
+ // =========================================================
+
+ @GetMapping("/count")
+ public ResponseEntity<Long> getTotalProductCount() {
+
+     // Ask ProductService for the total number
+     // of products stored in the Product database.
+     long count = productService.getTotalProductCount();
+
+     // Return the count to the caller.
+     return ResponseEntity.ok(count);
+ }
 
 
     // =========================================================

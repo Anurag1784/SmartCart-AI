@@ -74,6 +74,36 @@ public class SecurityConfig {
                     HttpMethod.OPTIONS,
                     "/**"
                 ).permitAll()
+                
+             // =================================================
+             // ADMIN CATEGORY MANAGEMENT
+             // =================================================
+
+             /*
+              * Only ADMIN users are allowed to create,
+              * update, or delete categories.
+              *
+              * SELLER and CUSTOMER users can only view
+              * categories through the public GET endpoints below.
+              */
+
+             // Create category
+             .requestMatchers(
+                 HttpMethod.POST,
+                 "/api/categories"
+             ).hasRole("ADMIN")
+
+             // Update category
+             .requestMatchers(
+                 HttpMethod.PUT,
+                 "/api/categories/**"
+             ).hasRole("ADMIN")
+
+             // Delete category
+             .requestMatchers(
+                 HttpMethod.DELETE,
+                 "/api/categories/**"
+             ).hasRole("ADMIN")
 
 
                 // =================================================

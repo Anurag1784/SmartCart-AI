@@ -2,6 +2,7 @@ package com.smartcart.auth.service;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -9,9 +10,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.smartcart.auth.dto.AdminUserResponse;
 import com.smartcart.auth.dto.AuthResponse;
 import com.smartcart.auth.dto.LoginRequest;
 import com.smartcart.auth.dto.RegisterRequest;
+import com.smartcart.auth.dto.UpdateAccountStatusRequest;
 import com.smartcart.auth.entity.PasswordResetToken;
 import com.smartcart.auth.entity.Role;
 import com.smartcart.auth.entity.User;
@@ -389,4 +392,62 @@ public class AuthService {
 
         passwordResetTokenRepository.save(resetToken);
     }
+    
+    // =========================================================
+    // ADMIN - USER COUNT BY ROLE
+    // =========================================================
+
+    public long countUsersByRole(String roleName) {
+
+        return userRepository.countByRole_RoleNameIgnoreCase(roleName);
+    }
+    
+ // =========================================================
+ // ADMIN - GET USERS BY ROLE
+ // =========================================================
+
+ public List<AdminUserResponse> getUsersByRole(String roleName) {
+
+     return userRepository
+             .findByRole_RoleNameIgnoreCase(roleName)
+             .stream()
+             .map(user -> new AdminUserResponse(
+                     user.getUserId(),
+                     user.getFirstName(),
+                     user.getLastName(),
+                     user.getEmail(),
+                     user.getPhone(),
+                     user.getRole().getRoleName(),
+                     user.getAccountStatus(),
+                     user.getCreatedAt()
+             ))
+             .toList();
+    }
+     //=========================================================
+     //ADMIN - UPDATE USER ACCOUNT STATUS
+    //=========================================================
+
+   @Transactional
+   public String updateAccountStatus(
+        Long userId,
+        UpdateAccountStatusRequest request) {
+
+     // Find the user using the user ID.
+     User user = userRepository.findById(userId)
+           .orElseThrow(() ->
+                   new RuntimeException(
+                           "User not found with ID: " + userId));
+
+        // Get the requested status.
+     String newStatus = request.getStatus().toUpperCase();
+
+    // Update the user's account status.
+    user.setAccountStatus(newStatus);
+
+    // Save the updated user.
+    userRepository.save(user);
+
+    // Return the new status.
+    return newStatus;
+  }
 }
