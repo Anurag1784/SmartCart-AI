@@ -17,17 +17,21 @@ import './OrderDetails.css'
 import { orderApi, productApi } from '../services/api'
 
 
+
 // =========================================================
 // ORDER DETAILS COMPONENT
 // =========================================================
 
 function OrderDetails() {
 
+
+
   // =========================================================
   // GET ORDER ID FROM URL
   // =========================================================
 
   const { orderId } = useParams()
+
 
 
   // =========================================================
@@ -63,6 +67,7 @@ function OrderDetails() {
   const [cancelMessage, setCancelMessage] = useState('')
 
 
+
   // =========================================================
   // FETCH ORDER + PRODUCT DETAILS
   // =========================================================
@@ -80,6 +85,7 @@ function OrderDetails() {
         setProducts({})
 
 
+
         // =====================================================
         // FETCH ORDER FROM ORDER SERVICE
         // =====================================================
@@ -93,6 +99,7 @@ function OrderDetails() {
         const orderData = response.data
 
         setOrder(orderData)
+
 
 
         // =====================================================
@@ -109,11 +116,13 @@ function OrderDetails() {
         ]
 
 
+
         // If the order does not contain any products,
         // there is nothing else to fetch.
         if (productIds.length === 0) {
           return
         }
+
 
 
         // Fetch every product from Product Service.
@@ -127,8 +136,10 @@ function OrderDetails() {
         )
 
 
+
         // Create a lookup object for the fetched products.
         const productMap = {}
+
 
 
         // Process every Product Service response.
@@ -144,8 +155,11 @@ function OrderDetails() {
         })
 
 
+
         // Store the product lookup map.
         setProducts(productMap)
+
+
 
       } catch (error) {
 
@@ -154,6 +168,7 @@ function OrderDetails() {
           'Order Details Fetch Error:',
           error
         )
+
 
 
         // Handle server-side errors.
@@ -178,6 +193,8 @@ function OrderDetails() {
           )
         }
 
+
+
       } finally {
 
         // The order request has completed.
@@ -186,10 +203,14 @@ function OrderDetails() {
     }
 
 
+
     // Start loading the selected order.
     fetchOrder()
 
+
+
   }, [orderId])
+
 
 
   // =========================================================
@@ -202,6 +223,7 @@ function OrderDetails() {
   }
 
 
+
   // =========================================================
   // FORMAT DATE
   // =========================================================
@@ -210,8 +232,10 @@ function OrderDetails() {
 
     // Handle missing date.
     if (!date) {
+
       return 'Date unavailable'
     }
+
 
 
     try {
@@ -226,12 +250,15 @@ function OrderDetails() {
         }
       )
 
+
+
     } catch {
 
       // Fallback when date formatting fails.
       return 'Date unavailable'
     }
   }
+
 
 
   // =========================================================
@@ -242,8 +269,10 @@ function OrderDetails() {
 
     // Handle missing status.
     if (!status) {
+
       return 'UNKNOWN'
     }
+
 
 
     // Convert:
@@ -257,6 +286,7 @@ function OrderDetails() {
   }
 
 
+
   // =========================================================
   // GET PRODUCT INFORMATION
   // =========================================================
@@ -266,6 +296,51 @@ function OrderDetails() {
     // Return the product from our lookup map.
     return products[productId]
   }
+
+
+
+  // =========================================================
+  // GET ORDER DISPLAY NAME
+  // =========================================================
+
+  const getOrderDisplayName = () => {
+
+    const orderItems = order?.orderItems || []
+
+
+
+    // Get product names from the fetched Product Service data.
+    const productNames = [
+      ...new Set(
+        orderItems
+          .map((item) => products[item.productId]?.productName)
+          .filter(Boolean)
+      ),
+    ]
+
+
+
+    // If product information is not available,
+    // use a safe fallback.
+    if (productNames.length === 0) {
+
+      return 'Order'
+    }
+
+
+
+    // Single-product order.
+    if (productNames.length === 1) {
+
+      return productNames[0]
+    }
+
+
+
+    // Multiple-product order.
+    return `${productNames[0]} + ${productNames.length - 1} more`
+  }
+
 
 
   // =========================================================
@@ -279,10 +354,14 @@ function OrderDetails() {
       'Are you sure you want to cancel this order?'
     )
 
+
+
     // Stop if the customer selects Cancel.
     if (!confirmed) {
+
       return
     }
+
 
 
     try {
@@ -294,20 +373,25 @@ function OrderDetails() {
       setCancelMessage('')
 
 
+
       // Send cancellation request to Order Service.
       const response = await orderApi.put(
         `/api/orders/${orderId}/cancel`
       )
 
 
+
       // Update the displayed order with the cancelled order.
       setOrder(response.data)
+
 
 
       // Show success message.
       setCancelMessage(
         'Order cancelled successfully.'
       )
+
+
 
     } catch (error) {
 
@@ -318,12 +402,15 @@ function OrderDetails() {
       )
 
 
+
       // Show backend error message when available.
       if (error.response?.data?.message) {
 
         setCancelMessage(
           error.response.data.message
         )
+
+
 
       } else {
 
@@ -333,12 +420,15 @@ function OrderDetails() {
         )
       }
 
+
+
     } finally {
 
       // Stop cancellation loading state.
       setCancelling(false)
     }
   }
+
 
 
   // =========================================================
@@ -348,6 +438,7 @@ function OrderDetails() {
   if (loading) {
 
     return (
+
       <main className="order-details-page">
 
         <div className="order-details-container">
@@ -373,6 +464,7 @@ function OrderDetails() {
   }
 
 
+
   // =========================================================
   // ERROR STATE
   // =========================================================
@@ -380,6 +472,7 @@ function OrderDetails() {
   if (error || !order) {
 
     return (
+
       <main className="order-details-page">
 
         <div className="order-details-container">
@@ -400,9 +493,11 @@ function OrderDetails() {
               to="/orders"
               className="order-details-back-button"
             >
+
               <ArrowLeft size={17} />
 
               Back to Orders
+
             </Link>
 
           </div>
@@ -412,6 +507,7 @@ function OrderDetails() {
       </main>
     )
   }
+
 
 
   // =========================================================
@@ -425,14 +521,17 @@ function OrderDetails() {
   const orderItems = order.orderItems || []
 
 
+
   // =========================================================
   // RENDER
   // =========================================================
 
   return (
+
     <main className="order-details-page">
 
       <div className="order-details-container">
+
 
 
         {/* =====================================================
@@ -443,12 +542,15 @@ function OrderDetails() {
           to="/orders"
           className="order-details-back"
         >
+
           <ArrowLeft size={17} />
 
           <span>
             Back to Orders
           </span>
+
         </Link>
+
 
 
         {/* =====================================================
@@ -462,7 +564,7 @@ function OrderDetails() {
           </p>
 
           <h1>
-            Order <span>#{order.orderId}</span>
+            {getOrderDisplayName()}
           </h1>
 
           <p className="order-details-description">
@@ -473,11 +575,13 @@ function OrderDetails() {
         </div>
 
 
+
         {/* =====================================================
             ORDER STATUS
             ===================================================== */}
 
         <section className="order-status-grid">
+
 
 
           {/* ===================================================
@@ -487,7 +591,9 @@ function OrderDetails() {
           <div className="order-status-card">
 
             <div className="order-status-icon">
+
               <Package size={22} />
+
             </div>
 
             <div>
@@ -505,6 +611,7 @@ function OrderDetails() {
           </div>
 
 
+
           {/* ===================================================
               PAYMENT STATUS CARD
               =================================================== */}
@@ -512,7 +619,9 @@ function OrderDetails() {
           <div className="order-status-card">
 
             <div className="order-status-icon">
+
               <CreditCard size={22} />
+
             </div>
 
             <div>
@@ -530,6 +639,7 @@ function OrderDetails() {
           </div>
 
 
+
           {/* ===================================================
               ORDER DATE CARD
               =================================================== */}
@@ -537,7 +647,9 @@ function OrderDetails() {
           <div className="order-status-card">
 
             <div className="order-status-icon">
+
               <CalendarDays size={22} />
+
             </div>
 
             <div>
@@ -557,11 +669,13 @@ function OrderDetails() {
         </section>
 
 
+
         {/* =====================================================
             MAIN CONTENT
             ===================================================== */}
 
         <div className="order-details-content">
+
 
 
           {/* ===================================================
@@ -585,10 +699,13 @@ function OrderDetails() {
               </div>
 
               <div className="order-details-section-icon">
+
                 <Package size={23} />
+
               </div>
 
             </div>
+
 
 
             {/* =================================================
@@ -604,7 +721,9 @@ function OrderDetails() {
                 const product = getProduct(item.productId)
 
 
+
                 return (
+
                   <article
                     className="order-item"
                     key={
@@ -614,11 +733,13 @@ function OrderDetails() {
                   >
 
 
+
                     {/* =========================================
                         PRODUCT IMAGE
                         ========================================= */}
 
                     <div className="order-item-image">
+
 
                       {product?.imageUrl ? (
 
@@ -628,7 +749,6 @@ function OrderDetails() {
                             product.productName ||
                             `Product ${item.productId}`
                           }
-
                           onError={(event) => {
 
                             // Hide a broken product image.
@@ -642,12 +762,15 @@ function OrderDetails() {
                                 .nextElementSibling
 
                             if (fallback) {
+
                               fallback.style.display = 'block'
                             }
+
                           }}
                         />
 
                       ) : null}
+
 
 
                       {/* =======================================
@@ -667,6 +790,7 @@ function OrderDetails() {
                     </div>
 
 
+
                     {/* =========================================
                         PRODUCT INFORMATION
                         ========================================= */}
@@ -674,21 +798,27 @@ function OrderDetails() {
                     <div className="order-item-info">
 
                       <h3>
+
                         {
                           product?.productName ||
                           `Product #${item.productId}`
                         }
+
                       </h3>
+
 
 
                       {/* Show the product brand when
                           Product Service provides it. */}
 
                       {product?.brand && (
+
                         <p>
                           {product.brand}
                         </p>
+
                       )}
+
 
 
                       {/* Keep seller information from
@@ -699,6 +829,7 @@ function OrderDetails() {
                       </p>
 
 
+
                       <span>
                         Quantity: {item.quantity}
                       </span>
@@ -706,11 +837,13 @@ function OrderDetails() {
                     </div>
 
 
+
                     {/* =========================================
                         PRODUCT PRICE
                         ========================================= */}
 
                     <div className="order-item-price">
+
 
                       {/* Unit price is taken from the
                           historical OrderItem record.
@@ -722,6 +855,8 @@ function OrderDetails() {
                         {formatCurrency(item.unitPrice)}
                       </span>
 
+
+
                       {/* Subtotal is also taken directly
                           from the Order Service. */}
 
@@ -732,12 +867,14 @@ function OrderDetails() {
                     </div>
 
                   </article>
+
                 )
               })}
 
             </div>
 
           </section>
+
 
 
           {/* ===================================================
@@ -761,10 +898,13 @@ function OrderDetails() {
               </div>
 
               <div className="order-details-section-icon">
+
                 <MapPin size={23} />
+
               </div>
 
             </div>
+
 
 
             {/* =================================================
@@ -776,21 +916,28 @@ function OrderDetails() {
               <div className="order-address-card">
 
                 <div className="order-address-icon">
+
                   <MapPin size={23} />
+
                 </div>
+
 
 
                 <div>
 
                   <strong>
+
                     {address.addressType ||
                       'Delivery Address'}
+
                   </strong>
+
 
 
                   <p>
                     {address.addressLine1}
                   </p>
+
 
 
                   {address.addressLine2 && (
@@ -802,9 +949,11 @@ function OrderDetails() {
                   )}
 
 
+
                   <p>
                     {address.city}, {address.state}
                   </p>
+
 
 
                   <p>
@@ -840,6 +989,7 @@ function OrderDetails() {
         </div>
 
 
+
         {/* =====================================================
             ORDER TOTAL
             ===================================================== */}
@@ -859,11 +1009,15 @@ function OrderDetails() {
           </div>
 
 
+
           <div className="order-total-icon">
+
             <CheckCircle2 size={25} />
+
           </div>
 
         </section>
+
 
 
         {/* =====================================================
@@ -882,19 +1036,27 @@ function OrderDetails() {
               onClick={handleCancelOrder}
               disabled={cancelling}
             >
+
               {cancelling
                 ? 'Cancelling Order...'
                 : 'Cancel Order'}
+
             </button>
 
+
+
             {cancelMessage && (
+
               <p className="order-cancel-message">
                 {cancelMessage}
               </p>
+
             )}
 
           </div>
+
         )}
+
 
 
         {/* =====================================================
@@ -920,11 +1082,14 @@ function OrderDetails() {
 
         </div>
 
+
+
       </div>
 
     </main>
   )
 }
+
 
 
 export default OrderDetails

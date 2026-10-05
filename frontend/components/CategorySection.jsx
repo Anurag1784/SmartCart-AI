@@ -20,16 +20,19 @@ import './CategorySection.css'
 
 
 /*
-  Dynamic categories displayed on the Home page.
-
-  Categories are loaded from Product Service.
-
-  Product Service:
-  http://localhost:8081/api/categories
-
-  Products are also loaded so that the actual number
-  of products belonging to each category can be shown.
-*/
+ * Dynamic categories displayed on the Home page.
+ *
+ * Only the first 6 categories are displayed here.
+ *
+ * All categories are loaded from Product Service.
+ *
+ * Product Service:
+ *
+ * http://localhost:8081/api/categories
+ *
+ * Products are also loaded so that the actual number
+ * of products belonging to each category can be shown.
+ */
 
 
 // ============================================================
@@ -44,6 +47,7 @@ const getCategoryDescription = (categoryName) => {
   if (
     name.includes('electronic')
   ) {
+
     return 'Smart devices, audio & accessories'
   }
 
@@ -52,6 +56,7 @@ const getCategoryDescription = (categoryName) => {
     name.includes('fashion') ||
     name.includes('cloth')
   ) {
+
     return 'Trendy clothing, shoes & accessories'
   }
 
@@ -60,6 +65,7 @@ const getCategoryDescription = (categoryName) => {
     name.includes('home') ||
     name.includes('living')
   ) {
+
     return 'Everything for your modern home'
   }
 
@@ -68,6 +74,7 @@ const getCategoryDescription = (categoryName) => {
     name.includes('computer') ||
     name.includes('laptop')
   ) {
+
     return 'Laptops, desktops & accessories'
   }
 
@@ -76,6 +83,7 @@ const getCategoryDescription = (categoryName) => {
     name.includes('wearable') ||
     name.includes('watch')
   ) {
+
     return 'Smart watches & fitness technology'
   }
 
@@ -84,6 +92,7 @@ const getCategoryDescription = (categoryName) => {
     name.includes('gaming') ||
     name.includes('game')
   ) {
+
     return 'Gaming consoles, gear & accessories'
   }
 
@@ -93,6 +102,7 @@ const getCategoryDescription = (categoryName) => {
     name.includes('phone') ||
     name.includes('smartphone')
   ) {
+
     return 'Smartphones, devices & accessories'
   }
 
@@ -113,6 +123,7 @@ const getCategoryIcon = (categoryName) => {
   if (
     name.includes('electronic')
   ) {
+
     return Headphones
   }
 
@@ -121,6 +132,7 @@ const getCategoryIcon = (categoryName) => {
     name.includes('fashion') ||
     name.includes('cloth')
   ) {
+
     return Shirt
   }
 
@@ -129,6 +141,7 @@ const getCategoryIcon = (categoryName) => {
     name.includes('home') ||
     name.includes('living')
   ) {
+
     return Home
   }
 
@@ -137,6 +150,7 @@ const getCategoryIcon = (categoryName) => {
     name.includes('computer') ||
     name.includes('laptop')
   ) {
+
     return Laptop
   }
 
@@ -145,6 +159,7 @@ const getCategoryIcon = (categoryName) => {
     name.includes('wearable') ||
     name.includes('watch')
   ) {
+
     return Watch
   }
 
@@ -153,6 +168,7 @@ const getCategoryIcon = (categoryName) => {
     name.includes('gaming') ||
     name.includes('game')
   ) {
+
     return Gamepad2
   }
 
@@ -162,6 +178,7 @@ const getCategoryIcon = (categoryName) => {
     name.includes('phone') ||
     name.includes('smartphone')
   ) {
+
     return Smartphone
   }
 
@@ -175,6 +192,7 @@ const getCategoryIcon = (categoryName) => {
 // ============================================================
 
 function CategorySection() {
+
 
   // ============================================================
   // STATE
@@ -235,6 +253,7 @@ function CategorySection() {
           productResponse.data
         )
 
+
       } catch (error) {
 
         console.error(
@@ -269,6 +288,7 @@ function CategorySection() {
           )
 
         }
+
 
       } finally {
 
@@ -353,19 +373,26 @@ function CategorySection() {
       <div className="category-dots category-dots-top">
 
         <span></span>
+
         <span></span>
+
         <span></span>
+
         <span></span>
+
         <span></span>
+
         <span></span>
+
         <span></span>
-        <span></span>
+
         <span></span>
 
       </div>
 
 
       <div className="category-container">
+
 
         {/* =================================
             SECTION HEADER
@@ -374,18 +401,27 @@ function CategorySection() {
         <div className="category-header">
 
           <p className="category-label">
+
             EXPLORE CATEGORIES
+
           </p>
 
+
           <h2>
+
             Find what you're
+
             <span> looking for.</span>
+
           </h2>
 
+
           <p className="category-description">
+
             Explore our product categories and quickly discover
             the things you need for work, lifestyle, entertainment,
             and everyday shopping.
+
           </p>
 
         </div>
@@ -409,7 +445,9 @@ function CategorySection() {
           >
 
             <p>
+
               Loading categories...
+
             </p>
 
           </div>
@@ -436,7 +474,9 @@ function CategorySection() {
           >
 
             <p>
+
               {error}
+
             </p>
 
           </div>
@@ -465,7 +505,9 @@ function CategorySection() {
             >
 
               <p>
+
                 No categories are currently available.
+
               </p>
 
             </div>
@@ -483,118 +525,129 @@ function CategorySection() {
 
             <div className="category-grid">
 
-              {categories.map((category, index) => {
+              {categories
+                .slice(0, 6)
+                .map((category, index) => {
 
-                // Select icon according to category name.
-                const Icon = getCategoryIcon(
-                  category.categoryName
-                )
-
-
-                // Get actual product count.
-                const productCount =
-                  getProductCount(category)
-
-
-                // Get description.
-                const description =
-                  getCategoryDescription(
+                  // Select icon according to category name.
+                  const Icon = getCategoryIcon(
                     category.categoryName
                   )
 
 
-                return (
-
-                  <article
-                    className="category-card"
-                    key={category.categoryId}
-                  >
-
-                    {/* Decorative card glow */}
-
-                    <div className="category-card-glow"></div>
+                  // Get actual product count.
+                  const productCount =
+                    getProductCount(category)
 
 
-                    {/* =================================
-                        CARD TOP
-                    ================================== */}
+                  // Get description.
+                  const description =
+                    getCategoryDescription(
+                      category.categoryName
+                    )
 
-                    <div className="category-card-top">
 
-                      <div className="category-icon">
+                  return (
 
-                        <Icon size={28} />
+                    <article
+                      className="category-card"
+                      key={category.categoryId}
+                    >
+
+                      {/* Decorative card glow */}
+
+                      <div className="category-card-glow"></div>
+
+
+                      {/* =================================
+                          CARD TOP
+                      ================================== */}
+
+                      <div className="category-card-top">
+
+                        <div className="category-icon">
+
+                          <Icon size={28} />
+
+                        </div>
+
+
+                        <span className="category-number">
+
+                          {String(index + 1).padStart(
+                            2,
+                            '0'
+                          )}
+
+                        </span>
 
                       </div>
 
 
-                      <span className="category-number">
+                      {/* =================================
+                          CARD CONTENT
+                      ================================== */}
 
-                        {String(index + 1).padStart(
-                          2,
-                          '0'
-                        )}
+                      <div className="category-content">
 
-                      </span>
+                        <h3>
 
-                    </div>
+                          {category.categoryName}
 
-
-                    {/* =================================
-                        CARD CONTENT
-                    ================================== */}
-
-                    <div className="category-content">
-
-                      <h3>
-                        {category.categoryName}
-                      </h3>
-
-                      <p>
-                        {description}
-                      </p>
-
-                    </div>
+                        </h3>
 
 
-                    {/* =================================
-                        CARD FOOTER
-                    ================================== */}
+                        <p>
 
-                    <div className="category-footer">
+                          {description}
 
-                      <span>
+                        </p>
 
-                        {productCount}{' '}
-
-                        {productCount === 1
-                          ? 'Product'
-                          : 'Products'}
-
-                      </span>
+                      </div>
 
 
-                      <Link
-                        to="/products"
-                        className="category-explore-button"
-                        aria-label={`Explore ${category.categoryName}`}
-                      >
+                      {/* =================================
+                          CARD FOOTER
+                      ================================== */}
+
+                      <div className="category-footer">
 
                         <span>
-                          Explore
+
+                          {productCount}{' '}
+
+                          {productCount === 1
+                            ? 'Product'
+                            : 'Products'}
+
                         </span>
 
-                        <ArrowRight size={16} />
 
-                      </Link>
+                        <Link
+                          to="/products"
+                          className="category-explore-button"
+                          aria-label={`Explore ${category.categoryName}`}
+                        >
 
-                    </div>
+                          <span>
 
-                  </article>
+                            Explore
 
-                )
+                          </span>
 
-              })}
+
+                          <ArrowRight size={16} />
+
+                        </Link>
+
+                      </div>
+
+
+                    </article>
+
+                  )
+
+                })}
 
             </div>
 
@@ -608,19 +661,23 @@ function CategorySection() {
         <div className="category-action">
 
           <Link
-            to="/products"
+            to="/categories"
             className="category-view-all"
           >
 
             <span>
-              Browse All Products
+
+              Browse All Categories
+
             </span>
+
 
             <ArrowRight size={18} />
 
           </Link>
 
         </div>
+
 
       </div>
 

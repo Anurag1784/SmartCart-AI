@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react'
-import { Eye, Heart, Filter } from 'lucide-react'
+
+import { Eye, Heart, Filter, Search } from 'lucide-react'
+
 import { Link } from 'react-router-dom'
 
 import './Products.css'
+
 import { productApi, orderApi } from '../services/api'
 
 
 function Products() {
+
 
   // ============================================================
   // PRODUCT STATE
@@ -16,10 +20,14 @@ function Products() {
   const [products, setProducts] = useState([])
 
 
-  // Store the currently selected category
+  // Store the currently selected category.
   //
-  // "ALL" means that all products should be displayed.
+  // "ALL" means that all categories are selected.
   const [selectedCategory, setSelectedCategory] = useState('ALL')
+
+
+  // Store the text entered into the product search box.
+  const [searchTerm, setSearchTerm] = useState('')
 
 
   // ============================================================
@@ -127,7 +135,9 @@ function Products() {
             )
 
           }
+
         }
+
 
       } catch (error) {
 
@@ -148,6 +158,7 @@ function Products() {
 
         }
 
+
         // Request was sent but Product Service did not respond
         else if (error.request) {
 
@@ -157,19 +168,23 @@ function Products() {
 
         }
 
+
         // Unexpected error
         else {
 
           setError(
             'Something went wrong while loading products.'
           )
+
         }
 
       } finally {
 
         // Stop loading after the request finishes
         setLoading(false)
+
       }
+
     }
 
 
@@ -186,18 +201,28 @@ function Products() {
   //
   // This means we don't have to hard-code category names.
   const categories = Array.from(
+
     new Set(
+
       products
+
         .map((product) => {
 
           if (typeof product.category === 'string') {
+
             return product.category
+
           }
 
+
           return product.category?.categoryName || null
+
         })
+
         .filter(Boolean)
+
     )
+
   )
 
 
@@ -205,22 +230,80 @@ function Products() {
   // FILTER PRODUCTS
   // ============================================================
 
-  // If "ALL" is selected, display every product.
-  //
-  // Otherwise, display only products belonging to
-  // the selected category.
-  const filteredProducts =
-    selectedCategory === 'ALL'
-      ? products
-      : products.filter((product) => {
+  /*
+   * Products are filtered using BOTH:
+   *
+   * 1. Selected category
+   * 2. Search term
+   *
+   * Search checks:
+   *
+   * - Product name
+   * - Brand
+   * - Description
+   *
+   * Search is case-insensitive.
+   */
 
-          const categoryName =
-            typeof product.category === 'string'
-              ? product.category
-              : product.category?.categoryName || ''
+  const filteredProducts = products.filter((product) => {
 
-          return categoryName === selectedCategory
-        })
+
+    // ==========================================================
+    // CATEGORY FILTER
+    // ==========================================================
+
+    const categoryName =
+      typeof product.category === 'string'
+        ? product.category
+        : product.category?.categoryName || ''
+
+
+    const matchesCategory =
+      selectedCategory === 'ALL' ||
+      categoryName === selectedCategory
+
+
+    // ==========================================================
+    // SEARCH FILTER
+    // ==========================================================
+
+    const normalizedSearchTerm =
+      searchTerm.trim().toLowerCase()
+
+
+    // If search box is empty, every product matches search.
+    if (!normalizedSearchTerm) {
+
+      return matchesCategory
+
+    }
+
+
+    // Product fields used for searching.
+    const productName =
+      product.productName?.toLowerCase() || ''
+
+
+    const brand =
+      product.brand?.toLowerCase() || ''
+
+
+    const description =
+      product.description?.toLowerCase() || ''
+
+
+    const matchesSearch =
+      productName.includes(normalizedSearchTerm) ||
+      brand.includes(normalizedSearchTerm) ||
+      description.includes(normalizedSearchTerm)
+
+
+    return (
+      matchesCategory &&
+      matchesSearch
+    )
+
+  })
 
 
   // ============================================================
@@ -228,6 +311,7 @@ function Products() {
   // ============================================================
 
   const handleWishlistToggle = async (productId) => {
+
 
     // ----------------------------------------------------------
     // CHECK LOGIN
@@ -244,6 +328,7 @@ function Products() {
       )
 
       return
+
     }
 
 
@@ -256,6 +341,7 @@ function Products() {
     if (wishlistUpdatingIds.has(productId)) {
 
       return
+
     }
 
 
@@ -268,6 +354,7 @@ function Products() {
         updatedIds.add(productId)
 
         return updatedIds
+
       }
     )
 
@@ -279,11 +366,13 @@ function Products() {
 
     try {
 
+
       // ========================================================
       // REMOVE FROM WISHLIST
       // ========================================================
 
       if (isCurrentlyWishlisted) {
+
 
         // DELETE /api/wishlist/{productId}
         await orderApi.delete(
@@ -300,16 +389,19 @@ function Products() {
             updatedIds.delete(productId)
 
             return updatedIds
+
           }
         )
 
       }
+
 
       // ========================================================
       // ADD TO WISHLIST
       // ========================================================
 
       else {
+
 
         // POST /api/wishlist/{productId}
         //
@@ -329,11 +421,15 @@ function Products() {
             updatedIds.add(productId)
 
             return updatedIds
+
           }
         )
+
       }
 
+
     } catch (error) {
+
 
       // Print wishlist operation error
       console.error(
@@ -350,20 +446,27 @@ function Products() {
           `Unable to update wishlist. Server returned ${error.response.status}.`
         )
 
-      } else if (error.request) {
+      }
+
+      else if (error.request) {
 
         window.alert(
           'Unable to connect to Order Service. Please make sure it is running.'
         )
 
-      } else {
+      }
+
+      else {
 
         window.alert(
           'Something went wrong while updating your wishlist.'
         )
+
       }
 
+
     } finally {
+
 
       // Remove this product from the updating state
       setWishlistUpdatingIds(
@@ -374,9 +477,12 @@ function Products() {
           updatedIds.delete(productId)
 
           return updatedIds
+
         }
       )
+
     }
+
   }
 
 
@@ -385,7 +491,9 @@ function Products() {
   // ============================================================
 
   return (
+
     <main className="products-page">
+
 
       <div className="products-page-container">
 
@@ -397,23 +505,31 @@ function Products() {
         <div className="products-page-header">
 
           <p className="products-page-label">
+
             OUR PRODUCTS
+
           </p>
 
+
           <h1>
+
             Explore <span>Products</span>
+
           </h1>
 
+
           <p className="products-page-description">
+
             Discover products from different categories and find
             something that fits your needs.
+
           </p>
 
         </div>
 
 
         {/* ====================================================
-            CATEGORY FILTER
+            SEARCH + CATEGORY FILTER
         ===================================================== */}
 
         {!loading &&
@@ -422,45 +538,87 @@ function Products() {
 
             <div className="products-category-filter">
 
-              <div className="products-filter-label">
 
-                <Filter size={18} />
+              {/* ==================================================
+                  SEARCH
+              ================================================== */}
 
-                <span>
-                  Filter by Category
-                </span>
+              <div className="products-search-wrapper">
+
+                <Search
+                  size={18}
+                  className="products-search-icon"
+                />
+
+
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(event) =>
+                    setSearchTerm(event.target.value)
+                  }
+                  placeholder="Search products..."
+                  className="products-search-input"
+                  aria-label="Search products"
+                />
 
               </div>
 
 
-              <select
-                value={selectedCategory}
-                onChange={(event) =>
-                  setSelectedCategory(
-                    event.target.value
-                  )
-                }
-                className="products-category-select"
-                aria-label="Filter products by category"
-              >
+              {/* ==================================================
+                  CATEGORY FILTER
+              ================================================== */}
 
-                <option value="ALL">
-                  All Categories
-                </option>
+              <div className="products-category-filter-wrapper">
+
+                <div className="products-filter-label">
+
+                  <Filter size={18} />
+
+                  <span>
+
+                    Filter by Category
+
+                  </span>
+
+                </div>
 
 
-                {categories.map((category) => (
+                <select
+                  value={selectedCategory}
+                  onChange={(event) =>
+                    setSelectedCategory(
+                      event.target.value
+                    )
+                  }
+                  className="products-category-select"
+                  aria-label="Filter products by category"
+                >
 
-                  <option
-                    key={category}
-                    value={category}
-                  >
-                    {category}
+                  <option value="ALL">
+
+                    All Categories
+
                   </option>
 
-                ))}
 
-              </select>
+                  {categories.map((category) => (
+
+                    <option
+                      key={category}
+                      value={category}
+                    >
+
+                      {category}
+
+                    </option>
+
+                  ))}
+
+                </select>
+
+              </div>
+
 
             </div>
 
@@ -476,18 +634,23 @@ function Products() {
 
           {/* ==================================================
               LOADING STATE
-          =================================================== */}
+          ================================================== */}
 
           {loading && (
 
             <div className="products-page-message">
 
               <h2>
+
                 Loading Products...
+
               </h2>
 
+
               <p>
+
                 Please wait while we fetch the latest products.
+
               </p>
 
             </div>
@@ -497,18 +660,23 @@ function Products() {
 
           {/* ==================================================
               ERROR STATE
-          =================================================== */}
+          ================================================== */}
 
           {!loading && error && (
 
             <div className="products-page-message">
 
               <h2>
+
                 Unable to Load Products
+
               </h2>
 
+
               <p>
+
                 {error}
+
               </p>
 
             </div>
@@ -518,7 +686,7 @@ function Products() {
 
           {/* ==================================================
               NO PRODUCTS
-          =================================================== */}
+          ================================================== */}
 
           {!loading &&
             !error &&
@@ -527,11 +695,16 @@ function Products() {
               <div className="products-page-message">
 
                 <h2>
+
                   No Products Found
+
                 </h2>
 
+
                 <p>
+
                   There are currently no products available.
+
                 </p>
 
               </div>
@@ -540,8 +713,8 @@ function Products() {
 
 
           {/* ==================================================
-              NO PRODUCTS IN SELECTED CATEGORY
-          =================================================== */}
+              NO PRODUCTS AFTER FILTER / SEARCH
+          ================================================== */}
 
           {!loading &&
             !error &&
@@ -551,12 +724,17 @@ function Products() {
               <div className="products-page-message">
 
                 <h2>
-                  No Products in This Category
+
+                  No Matching Products
+
                 </h2>
 
+
                 <p>
-                  There are currently no products available
-                  in the selected category.
+
+                  No products match your current search
+                  or category filter.
+
                 </p>
 
               </div>
@@ -566,7 +744,7 @@ function Products() {
 
           {/* ==================================================
               FILTERED PRODUCTS
-          =================================================== */}
+          ================================================== */}
 
           {!loading &&
             !error &&
@@ -574,7 +752,9 @@ function Products() {
 
               <div className="products-grid">
 
+
                 {filteredProducts.map((product) => {
+
 
                   // Product Service can return category as
                   // an object or as a simple string.
@@ -619,7 +799,9 @@ function Products() {
                         {/* Category Badge */}
 
                         <span className="product-category-badge">
+
                           {categoryName}
+
                         </span>
 
 
@@ -671,7 +853,9 @@ function Products() {
                         ) : (
 
                           <div className="product-image-placeholder">
+
                             📦
+
                           </div>
 
                         )}
@@ -689,7 +873,9 @@ function Products() {
                         {/* Product Name */}
 
                         <h3>
+
                           {product.productName}
+
                         </h3>
 
 
@@ -698,7 +884,9 @@ function Products() {
                         <p className="product-brand">
 
                           <span>
+
                             Brand:
+
                           </span>{' '}
 
                           {product.brand || 'N/A'}
@@ -744,10 +932,13 @@ function Products() {
                             <Eye size={18} />
 
                             <span>
+
                               View Details
+
                             </span>
 
                           </Link>
+
 
                         </div>
 
@@ -768,7 +959,9 @@ function Products() {
       </div>
 
     </main>
+
   )
+
 }
 
 

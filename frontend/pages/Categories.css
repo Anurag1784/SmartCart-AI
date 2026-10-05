@@ -1,0 +1,444 @@
+/* ============================================================
+   CATEGORIES PAGE
+   ============================================================ */
+
+.categories-page {
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+
+/* ============================================================
+   HERO SECTION
+   ============================================================ */
+
+.categories-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 90px 24px 80px;
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      rgba(59, 130, 246, 0.12),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 85% 30%,
+      rgba(99, 102, 241, 0.12),
+      transparent 35%
+    ),
+    #ffffff;
+}
+
+
+.categories-hero::before {
+  content: '';
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.06);
+  top: -120px;
+  left: -100px;
+  filter: blur(10px);
+}
+
+
+.categories-hero::after {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.06);
+  bottom: -160px;
+  right: -120px;
+  filter: blur(10px);
+}
+
+
+.categories-hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 850px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+
+.categories-label {
+  margin: 0 0 14px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #2563eb;
+}
+
+
+.categories-hero h1 {
+  margin: 0;
+  color: #0f172a;
+  font-size: clamp(38px, 5vw, 64px);
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+}
+
+
+.categories-hero h1 span {
+  color: #2563eb;
+}
+
+
+.categories-description {
+  max-width: 680px;
+  margin: 22px auto 0;
+  color: #64748b;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+
+/* ============================================================
+   CONTENT SECTION
+   ============================================================ */
+
+.categories-content {
+  padding: 70px 24px 90px;
+}
+
+
+.categories-container {
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+
+/* ============================================================
+   CATEGORY GRID
+   ============================================================ */
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+
+/* ============================================================
+   CATEGORY CARD
+   ============================================================ */
+
+.categories-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 290px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  background: #ffffff;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+
+  box-shadow:
+    0 10px 30px rgba(15, 23, 42, 0.06);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+
+.categories-card:hover {
+  transform: translateY(-6px);
+
+  border-color: #bfdbfe;
+
+  box-shadow:
+    0 18px 40px rgba(15, 23, 42, 0.10);
+}
+
+
+/* ============================================================
+   CARD GLOW
+   ============================================================ */
+
+.categories-card-glow {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  top: -70px;
+  right: -60px;
+
+  border-radius: 50%;
+
+  background: rgba(59, 130, 246, 0.08);
+
+  filter: blur(5px);
+
+  pointer-events: none;
+}
+
+
+/* ============================================================
+   CARD TOP
+   ============================================================ */
+
+.categories-card-top {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+
+.categories-icon {
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #2563eb;
+
+  background: #eff6ff;
+
+  border-radius: 16px;
+}
+
+
+.categories-number {
+  color: #cbd5e1;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  letter-spacing: 1px;
+}
+
+
+/* ============================================================
+   CARD CONTENT
+   ============================================================ */
+
+.categories-card-content {
+  position: relative;
+  z-index: 1;
+
+  margin-top: 30px;
+}
+
+
+.categories-card-content h2 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 22px;
+  line-height: 1.3;
+  font-weight: 750;
+}
+
+
+.categories-card-content p {
+  margin: 10px 0 0;
+
+  color: #64748b;
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+
+/* ============================================================
+   CARD FOOTER
+   ============================================================ */
+
+.categories-card-footer {
+  position: relative;
+  z-index: 1;
+
+  margin-top: 28px;
+  padding-top: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-top: 1px solid #f1f5f9;
+}
+
+
+.categories-card-footer > span {
+  color: #64748b;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+
+.categories-explore-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  color: #2563eb;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  text-decoration: none;
+
+  transition:
+    gap 0.2s ease,
+    color 0.2s ease;
+}
+
+
+.categories-explore-button:hover {
+  gap: 10px;
+  color: #1d4ed8;
+}
+
+
+/* ============================================================
+   LOADING / ERROR / EMPTY MESSAGE
+   ============================================================ */
+
+.categories-message {
+  min-height: 300px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  color: #64748b;
+
+  font-size: 16px;
+}
+
+
+/* ============================================================
+   BOTTOM ACTION
+   ============================================================ */
+
+.categories-bottom-action {
+  margin-top: 55px;
+
+  display: flex;
+  justify-content: center;
+}
+
+
+.categories-products-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 14px 24px;
+
+  color: #ffffff;
+  background: #2563eb;
+
+  border-radius: 12px;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  text-decoration: none;
+
+  box-shadow:
+    0 8px 20px rgba(37, 99, 235, 0.20);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.categories-products-button:hover {
+  transform: translateY(-2px);
+
+  background: #1d4ed8;
+
+  box-shadow:
+    0 12px 25px rgba(37, 99, 235, 0.25);
+}
+
+
+/* ============================================================
+   TABLET
+   ============================================================ */
+
+@media (max-width: 1024px) {
+
+  .categories-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+
+  .categories-hero {
+    padding: 75px 24px 65px;
+  }
+
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 640px) {
+
+  .categories-hero {
+    padding: 60px 20px 55px;
+  }
+
+
+  .categories-hero h1 {
+    font-size: 38px;
+  }
+
+
+  .categories-description {
+    font-size: 15px;
+  }
+
+
+  .categories-content {
+    padding: 50px 18px 70px;
+  }
+
+
+  .categories-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+
+  .categories-card {
+    min-height: 270px;
+    padding: 24px;
+  }
+
+
+  .categories-card-content h2 {
+    font-size: 20px;
+  }
+
+
+  .categories-bottom-action {
+    margin-top: 40px;
+  }
+
+}

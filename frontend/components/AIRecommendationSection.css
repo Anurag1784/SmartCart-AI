@@ -1,0 +1,733 @@
+/* ========================================
+   AI RECOMMENDATION SECTION
+======================================== */
+
+.ai-recommendation-section {
+  position: relative;
+
+  min-height: 700px;
+
+  padding: 100px 6% 105px;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      125deg,
+      #eef6ff 0%,
+      #f8fbff 30%,
+      #f8fafc 55%,
+      #f3f0ff 78%,
+      #e9e7ff 100%
+    );
+}
+
+
+/* ========================================
+   SECTION HEADER
+======================================== */
+
+.ai-recommendation-header {
+  position: relative;
+
+  z-index: 2;
+
+  max-width: 820px;
+
+  margin: 0 auto 58px;
+
+  text-align: center;
+}
+
+
+.ai-recommendation-label {
+  margin: 0 0 16px;
+
+  color: #2563eb;
+
+  font-size: 14px;
+
+  font-weight: 800;
+
+  letter-spacing: 2px;
+}
+
+
+.ai-recommendation-header h2 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 50px;
+
+  line-height: 1.15;
+
+  font-weight: 800;
+
+  letter-spacing: -1.2px;
+}
+
+
+.ai-recommendation-header h2 span {
+  color: #2563eb;
+}
+
+
+.ai-recommendation-description {
+  max-width: 760px;
+
+  margin: 20px auto 0;
+
+  color: #64748b;
+
+  font-size: 18px;
+
+  line-height: 1.75;
+}
+
+
+/* ========================================
+   MAIN GRID
+======================================== */
+
+.ai-recommendation-grid {
+  position: relative;
+
+  z-index: 2;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 24px;
+
+  width: 100%;
+
+  max-width: 1100px;
+
+  margin: 0 auto;
+}
+
+
+/* ========================================
+   PRODUCT CARD
+======================================== */
+
+.ai-recommendation-card {
+  position: relative;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(255, 255, 255, 0.95);
+
+  border-radius: 22px;
+
+  background: rgba(255, 255, 255, 0.92);
+
+  box-shadow:
+    0 14px 35px rgba(15, 23, 42, 0.08);
+
+  backdrop-filter: blur(12px);
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+
+
+.ai-recommendation-card:hover {
+  transform: translateY(-9px);
+
+  border-color: #bfdbfe;
+
+  box-shadow:
+    0 24px 50px rgba(15, 23, 42, 0.14);
+}
+
+
+/* ========================================
+   PRODUCT VISUAL
+======================================== */
+
+.ai-recommendation-visual {
+  position: relative;
+
+  height: 245px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      135deg,
+      #dbeafe 0%,
+      #eff6ff 52%,
+      #e8e4ff 100%
+    );
+}
+
+
+/* ========================================
+   AI BADGE
+======================================== */
+
+.ai-recommendation-badge {
+  position: absolute;
+
+  top: 17px;
+
+  left: 17px;
+
+  z-index: 4;
+
+  padding: 7px 12px;
+
+  border-radius: 20px;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.3px;
+
+  box-shadow:
+    0 7px 16px rgba(37, 99, 235, 0.22);
+}
+
+
+/* ========================================
+   WISHLIST
+======================================== */
+
+.ai-recommendation-wishlist {
+  position: absolute;
+
+  top: 14px;
+
+  right: 14px;
+
+  z-index: 5;
+
+  width: 42px;
+
+  height: 42px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border: 1px solid #dbeafe;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.92);
+
+  color: #2563eb;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 7px 18px rgba(15, 23, 42, 0.10);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+
+.ai-recommendation-wishlist:hover {
+  transform: scale(1.08);
+
+  background: #eff6ff;
+
+  color: #1d4ed8;
+}
+
+
+/* ========================================
+   PRODUCT IMAGE
+======================================== */
+
+.ai-recommendation-image {
+  position: relative;
+
+  z-index: 3;
+
+  width: 180px;
+
+  height: 180px;
+
+  display: block;
+
+  object-fit: contain;
+
+  filter:
+    drop-shadow(
+      0 15px 14px rgba(15, 23, 42, 0.12)
+    );
+
+  transition:
+    transform 0.4s ease;
+}
+
+
+.ai-recommendation-card:hover
+.ai-recommendation-image {
+  transform: scale(1.08) translateY(-5px);
+}
+
+
+/* ========================================
+   PRODUCT IMAGE PLACEHOLDER
+======================================== */
+
+.ai-recommendation-image-placeholder {
+  position: relative;
+
+  z-index: 3;
+
+  width: 180px;
+
+  height: 180px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 75px;
+
+  line-height: 1;
+
+  filter:
+    drop-shadow(
+      0 15px 14px rgba(15, 23, 42, 0.12)
+    );
+}
+
+
+/* ========================================
+   PRODUCT CONTENT
+======================================== */
+
+.ai-recommendation-content {
+  padding: 24px;
+}
+
+
+/* ========================================
+   CATEGORY
+======================================== */
+
+.ai-recommendation-category {
+  margin: 0 0 9px;
+
+  color: #64748b;
+
+  font-size: 12px;
+
+  font-weight: 800;
+
+  text-transform: uppercase;
+
+  letter-spacing: 1px;
+}
+
+
+/* ========================================
+   PRODUCT NAME
+======================================== */
+
+.ai-recommendation-content h3 {
+  min-height: 54px;
+
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 20px;
+
+  line-height: 1.35;
+
+  font-weight: 800;
+}
+
+
+/* ========================================
+   PRODUCT BRAND
+======================================== */
+
+.ai-recommendation-brand {
+  margin: 8px 0 0;
+
+  color: #64748b;
+
+  font-size: 12px;
+
+  line-height: 1.5;
+}
+
+
+.ai-recommendation-brand span {
+  font-weight: 700;
+
+  color: #475569;
+}
+
+
+/* ========================================
+   PRODUCT FOOTER
+======================================== */
+
+.ai-recommendation-footer {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 12px;
+
+  margin-top: 21px;
+
+  padding-top: 18px;
+
+  border-top: 1px solid #e2e8f0;
+}
+
+
+/* ========================================
+   PRICE
+======================================== */
+
+.ai-recommendation-price {
+  color: #2563eb;
+
+  font-size: 21px;
+
+  font-weight: 800;
+
+  white-space: nowrap;
+}
+
+
+/* ========================================
+   PRODUCT BUTTON
+======================================== */
+
+.ai-recommendation-button {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 6px;
+
+  padding: 9px 11px;
+
+  border-radius: 9px;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+
+  text-decoration: none;
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+
+.ai-recommendation-button:hover {
+  transform: translateY(-2px);
+
+  background: #2563eb;
+
+  color: #ffffff;
+}
+
+
+/* ========================================
+   LOADING / ERROR / EMPTY MESSAGE
+======================================== */
+
+.ai-recommendation-message {
+  position: relative;
+
+  z-index: 2;
+
+  min-height: 250px;
+
+  max-width: 900px;
+
+  margin: 0 auto;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 30px;
+
+  text-align: center;
+
+  border: 1px solid rgba(255, 255, 255, 0.9);
+
+  border-radius: 22px;
+
+  background: rgba(255, 255, 255, 0.82);
+
+  box-shadow:
+    0 14px 35px rgba(15, 23, 42, 0.07);
+}
+
+
+.ai-recommendation-message h3 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 20px;
+
+  font-weight: 800;
+}
+
+
+.ai-recommendation-message p {
+  max-width: 520px;
+
+  margin: 8px 0 0;
+
+  color: #64748b;
+
+  font-size: 14px;
+
+  line-height: 1.6;
+}
+
+
+/* ========================================
+   VIEW ALL ACTION
+======================================== */
+
+.ai-recommendation-action {
+  position: relative;
+
+  z-index: 2;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  margin-top: 48px;
+}
+
+
+.ai-recommendation-view-all {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 9px;
+
+  padding: 14px 24px;
+
+  border: 1px solid #2563eb;
+
+  border-radius: 11px;
+
+  background: rgba(255, 255, 255, 0.82);
+
+  color: #2563eb;
+
+  text-decoration: none;
+
+  font-size: 15px;
+
+  font-weight: 800;
+
+  box-shadow:
+    0 8px 20px rgba(37, 99, 235, 0.08);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.ai-recommendation-view-all:hover {
+  transform: translateY(-3px);
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  box-shadow:
+    0 12px 25px rgba(37, 99, 235, 0.20);
+}
+
+
+/* ========================================
+   LARGE TABLET
+======================================== */
+
+@media (max-width: 1100px) {
+
+  .ai-recommendation-section {
+    padding: 95px 5% 100px;
+  }
+
+
+  .ai-recommendation-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    max-width: 800px;
+
+    margin: 0 auto;
+  }
+
+
+  .ai-recommendation-visual {
+    height: 260px;
+  }
+
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 650px) {
+
+  .ai-recommendation-section {
+    min-height: auto;
+
+    padding: 75px 18px 80px;
+  }
+
+
+  .ai-recommendation-header {
+    margin-bottom: 45px;
+  }
+
+
+  .ai-recommendation-header h2 {
+    font-size: 37px;
+  }
+
+
+  .ai-recommendation-description {
+    font-size: 16px;
+  }
+
+
+  .ai-recommendation-grid {
+    grid-template-columns: 1fr;
+
+    gap: 20px;
+
+    max-width: 420px;
+  }
+
+
+  .ai-recommendation-visual {
+    height: 250px;
+  }
+
+
+  .ai-recommendation-image {
+    width: 175px;
+
+    height: 175px;
+  }
+
+
+  .ai-recommendation-image-placeholder {
+    width: 175px;
+
+    height: 175px;
+
+    font-size: 75px;
+  }
+
+}
+
+
+/* ========================================
+   SMALL MOBILE
+======================================== */
+
+@media (max-width: 430px) {
+
+  .ai-recommendation-header h2 {
+    font-size: 33px;
+  }
+
+
+  .ai-recommendation-label {
+    font-size: 12px;
+  }
+
+
+  .ai-recommendation-content {
+    padding: 22px;
+  }
+
+
+  .ai-recommendation-content h3 {
+    font-size: 19px;
+  }
+
+
+  .ai-recommendation-footer {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .ai-recommendation-price {
+    text-align: center;
+  }
+
+
+  .ai-recommendation-button {
+    width: 100%;
+
+    padding: 11px;
+  }
+
+}

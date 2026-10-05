@@ -11,6 +11,7 @@ import ForgotPassword from '../pages/ForgotPassword'
 import Profile from '../pages/Profile'
 import Products from '../pages/Products'
 import ProductDetails from '../pages/ProductDetails'
+import Categories from '../pages/Categories'
 import Cart from '../pages/Cart'
 import Checkout from '../pages/Checkout'
 import Orders from '../pages/Orders'
@@ -70,6 +71,12 @@ function App() {
         <Route
           path="/products"
           element={<Products />}
+        />
+
+        {/* All Categories */}
+        <Route
+          path="/categories"
+          element={<Categories />}
         />
 
         {/* Dynamic Product Details Route */}

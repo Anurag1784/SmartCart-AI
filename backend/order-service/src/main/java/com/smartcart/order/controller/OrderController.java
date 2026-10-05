@@ -1,10 +1,12 @@
 package com.smartcart.order.controller;
 
 import com.smartcart.order.entity.Address;
+
 import com.smartcart.order.entity.Order;
 import com.smartcart.order.entity.OrderItem;
 import com.smartcart.order.repository.AddressRepository;
 import com.smartcart.order.service.OrderService;
+import org.springframework.security.core.Authentication;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -209,12 +211,14 @@ public class OrderController {
     @PutMapping("/{orderId}/status")
     public ResponseEntity<Order> updateOrderStatus(
             @PathVariable Long orderId,
-            @RequestParam String status) {
+            @RequestParam String status,
+            Authentication authentication) {
 
         return ResponseEntity.ok(
                 orderService.updateOrderStatus(
                         orderId,
-                        status
+                        status,
+                        authentication
                 )
         );
     }

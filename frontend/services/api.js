@@ -83,6 +83,23 @@ const paymentApi = axios.create({
 
 
 // ============================================================
+// AI SERVICE AXIOS INSTANCE
+// ============================================================
+
+// AI Service is running on port 8000
+//
+// AI recommendation APIs will use this Axios instance.
+const aiApi = axios.create({
+  baseURL: 'http://localhost:8000',
+
+  // Tell the AI Service that we are sending JSON data.
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
+
+
+// ============================================================
 // JWT AUTHENTICATION INTERCEPTOR
 // ============================================================
 
@@ -93,10 +110,7 @@ const addAuthToken = (config) => {
   // IMPORTANT
   // ==========================================================
   //
-  // Authentication is now stored in sessionStorage instead of
-  // localStorage.
-  //
-  // This means:
+  // Authentication is stored in sessionStorage.
   //
   // Login
   //   ↓
@@ -253,6 +267,26 @@ paymentApi.interceptors.request.use(
 
 
 // ============================================================
+// AI SERVICE INTERCEPTOR
+// ============================================================
+
+// This runs automatically before every AI Service request.
+//
+// Personalized AI recommendations require the customer's
+// JWT token.
+aiApi.interceptors.request.use(
+
+  addAuthToken,
+
+  (error) => {
+
+    // Handle an error that happens before the request is sent.
+    return Promise.reject(error)
+  }
+)
+
+
+// ============================================================
 // EXPORTS
 // ============================================================
 
@@ -260,11 +294,12 @@ paymentApi.interceptors.request.use(
 export default api
 
 
-// Export Product, Inventory, Order and Payment
-// Service Axios instances.
+// Export Product, Inventory, Order, Payment
+// and AI Service Axios instances.
 export {
   productApi,
   inventoryApi,
   orderApi,
   paymentApi,
+  aiApi,
 }

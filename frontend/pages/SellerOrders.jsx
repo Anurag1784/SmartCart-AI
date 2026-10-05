@@ -1,11 +1,12 @@
 // ============================================================
 // SELLER ORDERS PAGE
 // ============================================================
-//
+
 // This page displays orders containing products belonging to
 // the currently logged-in seller.
 //
 // Main features:
+//
 // 1. Search orders
 // 2. Filter by order status
 // 3. Filter by payment status
@@ -16,6 +17,7 @@
 // 8. Compact seller-friendly table layout
 //
 // IMPORTANT:
+//
 // sellerId is NEVER sent from the frontend.
 //
 // Backend determines the seller from the JWT:
@@ -33,6 +35,7 @@
 import { useEffect, useMemo, useState } from 'react'
 
 import { Link } from 'react-router-dom'
+
 import SellerNavLink from '../components/SellerNavLink'
 
 import {
@@ -42,12 +45,15 @@ import {
   CalendarDays,
   Package,
   X,
+  User,
+  Mail,
+  Phone,
+  MapPin,
 } from 'lucide-react'
 
 import { orderApi, productApi } from '../services/api'
 
 import './SellerOrders.css'
-
 
 function SellerOrders() {
 
@@ -94,12 +100,18 @@ function SellerOrders() {
   // null means no order is expanded.
   const [expandedOrderId, setExpandedOrderId] = useState(null)
 
+  // Order ID currently being updated.
+  // This prevents duplicate status-update requests for the same order.
+  const [updatingOrderId, setUpdatingOrderId] = useState(null)
+
+  // Status-update error shown when a seller action fails.
+  const [statusUpdateError, setStatusUpdateError] = useState('')
+
   // Current pagination page.
   const [currentPage, setCurrentPage] = useState(1)
 
   // Number of orders displayed per page.
   const ORDERS_PER_PAGE = 10
-
 
   // ============================================================
   // LOAD SELLER ORDER ITEMS
@@ -147,23 +159,25 @@ function SellerOrders() {
           setError(
             'Unable to load seller orders. Please try again.'
           )
+
         }
 
       } finally {
 
         setLoading(false)
-      }
-    }
 
+      }
+
+    }
 
     fetchSellerOrders()
 
   }, [])
 
-
   // ============================================================
   // LOAD PRODUCT INFORMATION
   // ============================================================
+
   //
   // Order Service gives us productId.
   //
@@ -184,7 +198,9 @@ function SellerOrders() {
     const fetchProductInformation = async () => {
 
       if (orderItems.length === 0) {
+
         return
+
       }
 
       // Get unique product IDs.
@@ -217,21 +233,21 @@ function SellerOrders() {
           )
 
         }
+
       }
 
       setProducts(productResults)
 
     }
 
-
     fetchProductInformation()
 
   }, [orderItems])
 
-
   // ============================================================
   // GROUP ORDER ITEMS BY ORDER ID
   // ============================================================
+
   //
   // Example:
   //
@@ -263,6 +279,15 @@ function SellerOrders() {
 
           customerId: item.customerId,
 
+          // Customer information comes from Auth Service
+          // through Order Service.
+          customer: item.customer || null,
+
+          // Delivery address belongs to this order
+          // and comes from Order Service.
+          deliveryAddress:
+            item.deliveryAddress || null,
+
           createdAt: item.createdAt,
 
           orderStatus: item.orderStatus,
@@ -272,6 +297,7 @@ function SellerOrders() {
           items: [],
 
         }
+
       }
 
       groupedOrders[orderId].items.push(item)
@@ -291,7 +317,6 @@ function SellerOrders() {
 
   }, [orderItems])
 
-
   // ============================================================
   // HELPER — GET PRODUCT
   // ============================================================
@@ -299,8 +324,8 @@ function SellerOrders() {
   const getProduct = (productId) => {
 
     return products[productId] || null
-  }
 
+  }
 
   // ============================================================
   // HELPER — PRODUCT NAME
@@ -311,12 +336,14 @@ function SellerOrders() {
     const product = getProduct(productId)
 
     if (product?.productName) {
+
       return product.productName
+
     }
 
     return `Product #${productId}`
-  }
 
+  }
 
   // ============================================================
   // HELPER — PRODUCT SKU
@@ -327,12 +354,14 @@ function SellerOrders() {
     const product = getProduct(productId)
 
     if (product?.sku) {
+
       return `SKU: ${product.sku}`
+
     }
 
     return `Product ID: ${productId}`
-  }
 
+  }
 
   // ============================================================
   // HELPER — PRODUCT IMAGE
@@ -343,8 +372,8 @@ function SellerOrders() {
     const product = getProduct(productId)
 
     return product?.imageUrl || null
-  }
 
+  }
 
   // ============================================================
   // FORMAT CURRENCY
@@ -355,7 +384,9 @@ function SellerOrders() {
     const numericAmount = Number(amount)
 
     if (Number.isNaN(numericAmount)) {
+
       return '₹0.00'
+
     }
 
     return numericAmount.toLocaleString(
@@ -366,8 +397,8 @@ function SellerOrders() {
         minimumFractionDigits: 2,
       }
     )
-  }
 
+  }
 
   // ============================================================
   // FORMAT DATE
@@ -376,13 +407,17 @@ function SellerOrders() {
   const formatDate = (dateValue) => {
 
     if (!dateValue) {
+
       return '—'
+
     }
 
     const date = new Date(dateValue)
 
     if (Number.isNaN(date.getTime())) {
+
       return '—'
+
     }
 
     return date.toLocaleDateString(
@@ -393,8 +428,8 @@ function SellerOrders() {
         year: 'numeric',
       }
     )
-  }
 
+  }
 
   // ============================================================
   // FORMAT TIME
@@ -403,13 +438,17 @@ function SellerOrders() {
   const formatTime = (dateValue) => {
 
     if (!dateValue) {
+
       return ''
+
     }
 
     const date = new Date(dateValue)
 
     if (Number.isNaN(date.getTime())) {
+
       return ''
+
     }
 
     return date.toLocaleTimeString(
@@ -419,8 +458,8 @@ function SellerOrders() {
         minute: '2-digit',
       }
     )
-  }
 
+  }
 
   // ============================================================
   // SELLER TOTAL
@@ -438,8 +477,8 @@ function SellerOrders() {
       },
       0
     )
-  }
 
+  }
 
   // ============================================================
   // SEARCH + FILTER
@@ -448,7 +487,6 @@ function SellerOrders() {
   const filteredOrders = useMemo(() => {
 
     let result = [...orders]
-
 
     // ----------------------------------------------------------
     // SEARCH
@@ -468,9 +506,10 @@ function SellerOrders() {
             .toLowerCase()
             .includes(search)
         ) {
-          return true
-        }
 
+          return true
+
+        }
 
         // Search by customer ID.
         if (
@@ -478,9 +517,40 @@ function SellerOrders() {
             .toLowerCase()
             .includes(search)
         ) {
+
           return true
+
         }
 
+        // Search by customer name / email / phone.
+        const customer = order.customer
+
+        if (customer) {
+
+          const customerName =
+            `${customer.firstName || ''} ${customer.lastName || ''}`
+              .trim()
+              .toLowerCase()
+
+          const customerEmail =
+            String(customer.email || '')
+              .toLowerCase()
+
+          const customerPhone =
+            String(customer.phone || '')
+              .toLowerCase()
+
+          if (
+            customerName.includes(search) ||
+            customerEmail.includes(search) ||
+            customerPhone.includes(search)
+          ) {
+
+            return true
+
+          }
+
+        }
 
         // Search by product ID / product name / SKU.
         return order.items.some((item) => {
@@ -496,7 +566,6 @@ function SellerOrders() {
             product?.sku || ''
 
           return (
-
             String(item.productId)
               .toLowerCase()
               .includes(search)
@@ -512,7 +581,6 @@ function SellerOrders() {
             sku
               .toLowerCase()
               .includes(search)
-
           )
 
         })
@@ -520,7 +588,6 @@ function SellerOrders() {
       })
 
     }
-
 
     // ----------------------------------------------------------
     // ORDER STATUS
@@ -536,7 +603,6 @@ function SellerOrders() {
 
     }
 
-
     // ----------------------------------------------------------
     // PAYMENT STATUS
     // ----------------------------------------------------------
@@ -550,7 +616,6 @@ function SellerOrders() {
       )
 
     }
-
 
     // ----------------------------------------------------------
     // DATE FILTER
@@ -569,7 +634,9 @@ function SellerOrders() {
       result = result.filter((order) => {
 
         if (!order.createdAt) {
+
           return false
+
         }
 
         const orderDate = new Date(
@@ -581,7 +648,6 @@ function SellerOrders() {
           return orderDate >= today
 
         }
-
 
         if (dateFilter === '7_DAYS') {
 
@@ -596,7 +662,6 @@ function SellerOrders() {
 
         }
 
-
         if (dateFilter === '30_DAYS') {
 
           const thirtyDaysAgo =
@@ -610,13 +675,11 @@ function SellerOrders() {
 
         }
 
-
         return true
 
       })
 
     }
-
 
     return result
 
@@ -628,7 +691,6 @@ function SellerOrders() {
     dateFilter,
     products,
   ])
-
 
   // ============================================================
   // PAGINATION
@@ -642,13 +704,11 @@ function SellerOrders() {
     )
   )
 
-
   // Orders visible on current page.
   const paginatedOrders = filteredOrders.slice(
     (currentPage - 1) * ORDERS_PER_PAGE,
     currentPage * ORDERS_PER_PAGE
   )
-
 
   // ============================================================
   // RESET PAGE WHEN FILTER CHANGES
@@ -664,7 +724,6 @@ function SellerOrders() {
     paymentStatusFilter,
     dateFilter,
   ])
-
 
   // ============================================================
   // CLEAR FILTERS
@@ -684,7 +743,6 @@ function SellerOrders() {
 
   }
 
-
   // ============================================================
   // EXPAND / COLLAPSE
   // ============================================================
@@ -703,6 +761,155 @@ function SellerOrders() {
 
   }
 
+  // ============================================================
+  // GET NEXT ORDER STATUS
+  // ============================================================
+
+  const getNextOrderStatus = (currentStatus) => {
+
+    switch (currentStatus) {
+
+      case 'CONFIRMED':
+        return 'PROCESSING'
+
+      case 'PROCESSING':
+        return 'SHIPPED'
+
+      case 'SHIPPED':
+        return 'DELIVERED'
+
+      case 'DELIVERED':
+        return 'COMPLETED'
+
+      default:
+        return null
+
+    }
+
+  }
+
+  // ============================================================
+  // GET NEXT STATUS BUTTON LABEL
+  // ============================================================
+
+  const getNextOrderStatusLabel = (currentStatus) => {
+
+    switch (currentStatus) {
+
+      case 'CONFIRMED':
+        return 'Process Order'
+
+      case 'PROCESSING':
+        return 'Ship Order'
+
+      case 'SHIPPED':
+        return 'Mark Delivered'
+
+      case 'DELIVERED':
+        return 'Complete Order'
+
+      default:
+        return null
+
+    }
+
+  }
+
+  // ============================================================
+  // UPDATE ORDER STATUS
+  // ============================================================
+
+  const handleOrderStatusUpdate = async (
+    orderId,
+    currentStatus
+  ) => {
+
+    const nextStatus =
+      getNextOrderStatus(currentStatus)
+
+    if (!nextStatus) {
+
+      return
+
+    }
+
+    const actionLabel =
+      getNextOrderStatusLabel(currentStatus)
+
+    const confirmed = window.confirm(
+      `Are you sure you want to ${actionLabel.toLowerCase()} for Order #${orderId}?`
+    )
+
+    if (!confirmed) {
+
+      return
+
+    }
+
+    try {
+
+      setUpdatingOrderId(orderId)
+
+      setStatusUpdateError('')
+
+      await orderApi.put(
+        `/api/orders/${orderId}/status`,
+        null,
+        {
+          params: {
+            status: nextStatus,
+          },
+        }
+      )
+
+      // Order status is stored at Order level.
+      // Therefore every OrderItem belonging to this order
+      // must display the same updated status.
+      setOrderItems((previousItems) =>
+        previousItems.map((item) =>
+          Number(item.orderId) === Number(orderId)
+            ? {
+                ...item,
+                orderStatus: nextStatus,
+              }
+            : item
+        )
+      )
+
+    } catch (error) {
+
+      console.error(
+        'Seller Order Status Update Error:',
+        error
+      )
+
+      if (error.response?.status === 401) {
+
+        setStatusUpdateError(
+          'Your session has expired. Please login again.'
+        )
+
+      } else if (error.response?.status === 403) {
+
+        setStatusUpdateError(
+          'You are not allowed to update this order.'
+        )
+
+      } else {
+
+        setStatusUpdateError(
+          'Unable to update order status. Please try again.'
+        )
+
+      }
+
+    } finally {
+
+      setUpdatingOrderId(null)
+
+    }
+
+  }
 
   // ============================================================
   // STATUS CLASS
@@ -711,7 +918,9 @@ function SellerOrders() {
   const getStatusClass = (status) => {
 
     if (!status) {
+
       return 'status-default'
+
     }
 
     return `status-${status
@@ -719,7 +928,6 @@ function SellerOrders() {
       .replaceAll('_', '-')}`
 
   }
-
 
   // ============================================================
   // LOADING
@@ -748,7 +956,6 @@ function SellerOrders() {
     )
 
   }
-
 
   // ============================================================
   // PAGE
@@ -780,15 +987,14 @@ function SellerOrders() {
 
         </div>
 
-
         <SellerNavLink
-            to="/seller"
-           className="seller-orders-back-button"
-       >
-            ← Dashboard
+          to="/seller"
+          className="seller-orders-back-button"
+        >
+          ← Dashboard
         </SellerNavLink>
-      </section>
 
+      </section>
 
       {/* ======================================================
           ERROR
@@ -810,6 +1016,21 @@ function SellerOrders() {
 
       )}
 
+      {statusUpdateError && (
+
+        <div className="seller-orders-error">
+
+          <strong>
+            Order status update failed
+          </strong>
+
+          <p>
+            {statusUpdateError}
+          </p>
+
+        </div>
+
+      )}
 
       {/* ======================================================
           SEARCH + FILTER BAR
@@ -820,6 +1041,7 @@ function SellerOrders() {
         <section className="seller-orders-controls">
 
           {/* SEARCH */}
+
           <div className="seller-orders-search">
 
             <Search size={19} />
@@ -832,7 +1054,7 @@ function SellerOrders() {
                   event.target.value
                 )
               }
-              placeholder="Search by order ID, customer ID or product..."
+              placeholder="Search by order ID, customer or product..."
             />
 
             {searchText && (
@@ -852,8 +1074,8 @@ function SellerOrders() {
 
           </div>
 
-
           {/* ORDER STATUS */}
+
           <select
             value={orderStatusFilter}
             onChange={(event) =>
@@ -898,8 +1120,8 @@ function SellerOrders() {
 
           </select>
 
-
           {/* PAYMENT STATUS */}
+
           <select
             value={paymentStatusFilter}
             onChange={(event) =>
@@ -932,8 +1154,8 @@ function SellerOrders() {
 
           </select>
 
-
           {/* DATE FILTER */}
+
           <div className="seller-orders-date-filter">
 
             <CalendarDays size={17} />
@@ -967,8 +1189,8 @@ function SellerOrders() {
 
           </div>
 
-
           {/* CLEAR */}
+
           <button
             type="button"
             className="seller-orders-clear-button"
@@ -980,7 +1202,6 @@ function SellerOrders() {
         </section>
 
       )}
-
 
       {/* ======================================================
           RESULT COUNT
@@ -1004,7 +1225,6 @@ function SellerOrders() {
 
           </div>
 
-
           <div className="seller-orders-per-page">
 
             <span>
@@ -1025,7 +1245,6 @@ function SellerOrders() {
 
       )}
 
-
       {/* ======================================================
           ORDER TABLE
           ====================================================== */}
@@ -1039,26 +1258,43 @@ function SellerOrders() {
 
             <div className="seller-orders-table-header">
 
-              <span>ORDER</span>
+              <span>
+                ORDER
+              </span>
 
-              <span>CUSTOMER</span>
+              <span>
+                CUSTOMER
+              </span>
 
-              <span>PRODUCTS</span>
+              <span>
+                PRODUCTS
+              </span>
 
-              <span>ITEMS</span>
+              <span>
+                ITEMS
+              </span>
 
-              <span>SELLER TOTAL</span>
+              <span>
+                SELLER TOTAL
+              </span>
 
-              <span>ORDER STATUS</span>
+              <span>
+                ORDER STATUS
+              </span>
 
-              <span>PAYMENT</span>
+              <span>
+                PAYMENT
+              </span>
 
-              <span>DATE</span>
+              <span>
+                DATE
+              </span>
 
-              <span>ACTIONS</span>
+              <span>
+                ACTIONS
+              </span>
 
             </div>
-
 
             {/* TABLE ROWS */}
 
@@ -1081,7 +1317,6 @@ function SellerOrders() {
                   order.items
                 )
 
-
               return (
 
                 <div
@@ -1100,6 +1335,7 @@ function SellerOrders() {
                   <div className="seller-order-row">
 
                     {/* ORDER */}
+
                     <div className="seller-order-number">
 
                       <button
@@ -1130,32 +1366,38 @@ function SellerOrders() {
 
                     </div>
 
-
                     {/* CUSTOMER */}
+
                     <div className="seller-order-customer">
 
                       <span>
-                        #{order.customerId}
+
+                        {order.customer
+                          ? `${order.customer.firstName || ''} ${order.customer.lastName || ''}`.trim()
+                          : `#${order.customerId}`}
+
                       </span>
 
                     </div>
 
-
                     {/* PRODUCTS */}
+
                     <div className="seller-order-products-count">
 
                       <span>
+
                         {order.items.length}
                         {' '}
                         {order.items.length === 1
                           ? 'product'
                           : 'products'}
+
                       </span>
 
                     </div>
 
-
                     {/* ITEMS */}
+
                     <div className="seller-order-items-count">
 
                       <strong>
@@ -1164,8 +1406,8 @@ function SellerOrders() {
 
                     </div>
 
-
                     {/* SELLER TOTAL */}
+
                     <div className="seller-order-total">
 
                       <strong>
@@ -1176,8 +1418,8 @@ function SellerOrders() {
 
                     </div>
 
-
                     {/* ORDER STATUS */}
+
                     <div>
 
                       <span
@@ -1190,8 +1432,8 @@ function SellerOrders() {
 
                     </div>
 
-
                     {/* PAYMENT */}
+
                     <div>
 
                       <span
@@ -1204,8 +1446,8 @@ function SellerOrders() {
 
                     </div>
 
-
                     {/* DATE */}
+
                     <div className="seller-order-date">
 
                       <span>
@@ -1222,8 +1464,8 @@ function SellerOrders() {
 
                     </div>
 
-
                     {/* ACTION */}
+
                     <div>
 
                       <button
@@ -1240,10 +1482,35 @@ function SellerOrders() {
                           : 'View'}
                       </button>
 
+                      {getNextOrderStatus(order.orderStatus) && (
+
+                        <button
+                          type="button"
+                          className="seller-order-view-button seller-order-status-button"
+                          onClick={() =>
+                            handleOrderStatusUpdate(
+                              order.orderId,
+                              order.orderStatus
+                            )
+                          }
+                          disabled={
+                            updatingOrderId === order.orderId
+                          }
+                        >
+
+                          {updatingOrderId === order.orderId
+                            ? 'Updating...'
+                            : getNextOrderStatusLabel(
+                                order.orderStatus
+                              )}
+
+                        </button>
+
+                      )}
+
                     </div>
 
                   </div>
-
 
                   {/* ========================================
                       EXPANDED ORDER DETAILS
@@ -1253,6 +1520,138 @@ function SellerOrders() {
 
                     <div className="seller-order-expanded">
 
+                      {/* ==================================================
+                          CUSTOMER + DELIVERY INFORMATION
+                          ================================================== */}
+
+                      <div className="seller-order-customer-details">
+
+                        {/* CUSTOMER INFORMATION */}
+
+                        <div className="seller-order-info-card">
+
+                          <div className="seller-order-info-card-header">
+
+                            <span>
+
+                              <User size={15} />
+
+                              CUSTOMER INFORMATION
+
+                            </span>
+
+                          </div>
+
+                          <div className="seller-order-customer-info-body">
+
+                            <strong>
+
+                              {order.customer
+                                ? `${order.customer.firstName || ''} ${order.customer.lastName || ''}`.trim()
+                                : `Customer #${order.customerId}`}
+
+                            </strong>
+
+                            <div className="seller-order-contact-row">
+
+                              <Mail size={14} />
+
+                              <span>
+                                {order.customer?.email ||
+                                  'Email unavailable'}
+                              </span>
+
+                            </div>
+
+                            <div className="seller-order-contact-row">
+
+                              <Phone size={14} />
+
+                              <span>
+                                {order.customer?.phone ||
+                                  'Phone unavailable'}
+                              </span>
+
+                            </div>
+
+                          </div>
+
+                        </div>
+
+                        {/* DELIVERY ADDRESS */}
+
+                        <div className="seller-order-info-card">
+
+                          <div className="seller-order-info-card-header">
+
+                            <span>
+
+                              <MapPin size={15} />
+
+                              DELIVERY ADDRESS
+
+                            </span>
+
+                          </div>
+
+                          <div className="seller-order-address-body">
+
+                            {order.deliveryAddress ? (
+
+                              <>
+
+                                {order.deliveryAddress.addressLine1 && (
+
+                                  <span>
+                                    {order.deliveryAddress.addressLine1}
+                                  </span>
+
+                                )}
+
+                                {order.deliveryAddress.addressLine2 && (
+
+                                  <span>
+                                    {order.deliveryAddress.addressLine2}
+                                  </span>
+
+                                )}
+
+                                <span>
+
+                                  {[
+                                    order.deliveryAddress.city,
+                                    order.deliveryAddress.state,
+                                    order.deliveryAddress.postalCode,
+                                  ]
+                                    .filter(Boolean)
+                                    .join(', ')}
+
+                                </span>
+
+                                {order.deliveryAddress.country && (
+
+                                  <span>
+                                    {order.deliveryAddress.country}
+                                  </span>
+
+                                )}
+
+                              </>
+
+                            ) : (
+
+                              <span>
+                                Delivery address unavailable
+                              </span>
+
+                            )}
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
                       <div className="seller-order-expanded-header">
 
                         <span>
@@ -1260,15 +1659,16 @@ function SellerOrders() {
                         </span>
 
                         <strong>
+
                           {order.items.length}
                           {' '}
                           {order.items.length === 1
                             ? 'Product'
                             : 'Products'}
+
                         </strong>
 
                       </div>
-
 
                       {/* PRODUCT TABLE */}
 
@@ -1294,7 +1694,6 @@ function SellerOrders() {
 
                         </div>
 
-
                         {order.items.map((item) => {
 
                           const product =
@@ -1306,7 +1705,6 @@ function SellerOrders() {
                             getProductImage(
                               item.productId
                             )
-
 
                           return (
 
@@ -1342,7 +1740,6 @@ function SellerOrders() {
 
                                 </div>
 
-
                                 <div>
 
                                   <strong>
@@ -1361,13 +1758,11 @@ function SellerOrders() {
 
                               </div>
 
-
                               {/* QUANTITY */}
 
                               <strong>
                                 {item.quantity}
                               </strong>
-
 
                               {/* UNIT PRICE */}
 
@@ -1376,7 +1771,6 @@ function SellerOrders() {
                                   item.unitPrice
                                 )}
                               </span>
-
 
                               {/* SUBTOTAL */}
 
@@ -1407,7 +1801,6 @@ function SellerOrders() {
           </section>
 
         )}
-
 
       {/* ======================================================
           EMPTY SEARCH / FILTER RESULT
@@ -1442,7 +1835,6 @@ function SellerOrders() {
 
         )}
 
-
       {/* ======================================================
           PAGINATION
           ====================================================== */}
@@ -1453,23 +1845,33 @@ function SellerOrders() {
           <div className="seller-orders-pagination">
 
             <span>
+
               Showing{' '}
+
               {((currentPage - 1) *
                 ORDERS_PER_PAGE) + 1}
+
               {' '}
+
               to{' '}
+
               {Math.min(
                 currentPage *
                   ORDERS_PER_PAGE,
                 filteredOrders.length
               )}
-              {' '}
-              of{' '}
-              {filteredOrders.length}
-              {' '}
-              orders
-            </span>
 
+              {' '}
+
+              of{' '}
+
+              {filteredOrders.length}
+
+              {' '}
+
+              orders
+
+            </span>
 
             <div className="seller-pagination-buttons">
 
@@ -1488,7 +1890,6 @@ function SellerOrders() {
               >
                 ←
               </button>
-
 
               {Array.from(
                 { length: totalPages },
@@ -1512,7 +1913,6 @@ function SellerOrders() {
                 </button>
 
               ))}
-
 
               <button
                 type="button"
@@ -1539,8 +1939,9 @@ function SellerOrders() {
         )}
 
     </main>
-  )
-}
 
+  )
+
+}
 
 export default SellerOrders

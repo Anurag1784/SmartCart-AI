@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.smartcart.auth.dto.AdminUserResponse;
 import com.smartcart.auth.dto.AuthResponse;
+import com.smartcart.auth.dto.CustomerSummaryResponse;
 import com.smartcart.auth.dto.LoginRequest;
 import com.smartcart.auth.dto.RegisterRequest;
 import com.smartcart.auth.dto.UpdateAccountStatusRequest;
@@ -450,4 +451,25 @@ public class AuthService {
     // Return the new status.
     return newStatus;
   }
+   
+   
+// =========================================================
+// CUSTOMER - GET CUSTOMER SUMMARY
+// =========================================================
+
+public CustomerSummaryResponse getCustomerSummary(Long userId) {
+
+    User user = userRepository.findById(userId)
+            .orElseThrow(() ->
+                    new RuntimeException(
+                            "User not found with ID: " + userId));
+
+    return new CustomerSummaryResponse(
+            user.getUserId(),
+            user.getFirstName(),
+            user.getLastName(),
+            user.getEmail(),
+            user.getPhone()
+    );
+}
 }

@@ -58,6 +58,12 @@ ENV/
 !.vscode/extensions.json
 !.vscode/settings.json
 
+
+# ---------- .NET / ASP.NET Core ----------
+**/.vs/
+**/bin/
+**/obj/
+
 # ---------- Eclipse ----------
 .classpath
 .project

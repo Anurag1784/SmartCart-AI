@@ -2,6 +2,8 @@ package com.smartcart.order.service;
 
 import com.smartcart.order.dto.PaymentResponse;
 
+import com.smartcart.order.feign.AuthClient;
+
 import com.smartcart.order.dto.InternalOrderNotificationRequest;
 
 import com.smartcart.order.feign.NotificationClient;
@@ -57,6 +59,8 @@ public class OrderService {
     private final InventoryClient inventoryClient;
 
     private final PaymentClient paymentClient;
+    
+    private final AuthClient authClient;
 
     private final NotificationClient notificationClient;
 
@@ -76,7 +80,9 @@ public class OrderService {
 
             PaymentClient paymentClient,
 
-            NotificationClient notificationClient) {
+            NotificationClient notificationClient,
+            
+            AuthClient authClient) {
 
         this.orderRepository = orderRepository;
 
@@ -89,6 +95,8 @@ public class OrderService {
         this.paymentClient = paymentClient;
 
         this.notificationClient = notificationClient;
+        
+        this.authClient = authClient;
 
     }
 
@@ -1167,21 +1175,69 @@ public class OrderService {
 
     // =========================================================
 
+   
+
     @Transactional
-
     public Order updateOrderStatus(
-
             Long orderId,
+            String newStatus,
+            Authentication authentication){
 
-            String newStatus) {
+            // =====================================================
+            // VERIFY AUTHENTICATED SELLER
+            // =====================================================
 
-        Order order =
+            if (authentication == null ||
+                    authentication.getPrincipal() == null) {
 
-                getOrderById(orderId);
+                throw new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED,
+                        "Authentication is required"
+                );
+            }
 
-        String currentStatus =
+            Object principal =
+                    authentication.getPrincipal();
 
-                order.getOrderStatus();
+            if (!(principal instanceof Long)) {
+
+                throw new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED,
+                        "Invalid authenticated seller"
+                );
+            }
+
+            Long authenticatedSellerId =
+                    (Long) principal;
+
+            // =====================================================
+            // VERIFY SELLER OWNS THIS ORDER
+            // =====================================================
+
+            boolean sellerOwnsOrder =
+                    orderItemRepository
+                            .existsByOrderOrderIdAndSellerId(
+                                    orderId,
+                                    authenticatedSellerId
+                            );
+
+            if (!sellerOwnsOrder) {
+
+                throw new ResponseStatusException(
+                        HttpStatus.FORBIDDEN,
+                        "You are not allowed to update this order"
+                );
+            }
+
+            // =====================================================
+            // GET ORDER
+            // =====================================================
+
+            Order order =
+                    getOrderById(orderId);
+
+            String currentStatus =
+                    order.getOrderStatus();
 
         // =====================================================
 

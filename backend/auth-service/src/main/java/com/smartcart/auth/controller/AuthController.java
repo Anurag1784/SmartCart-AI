@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.smartcart.auth.dto.AdminUserResponse;
 import com.smartcart.auth.dto.AuthResponse;
+import com.smartcart.auth.dto.CustomerSummaryResponse;
 import com.smartcart.auth.dto.ForgotPasswordRequest;
 import com.smartcart.auth.dto.LoginRequest;
 import com.smartcart.auth.dto.RegisterRequest;
@@ -96,6 +97,20 @@ public class AuthController {
         return ResponseEntity.ok(
                 "Password reset successfully. You can now login with your new password.");
     }
+    
+      // =========================================================
+      // CUSTOMER - GET CUSTOMER SUMMARY
+      // =========================================================
+
+       @GetMapping("/users/{userId}/summary")
+       public ResponseEntity<CustomerSummaryResponse> getCustomerSummary(
+             @PathVariable Long userId) {
+
+             CustomerSummaryResponse response =
+                 authService.getCustomerSummary(userId);
+
+         return ResponseEntity.ok(response);
+        }
     
     
     // =========================================================

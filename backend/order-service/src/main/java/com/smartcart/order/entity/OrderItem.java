@@ -2,6 +2,7 @@ package com.smartcart.order.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.smartcart.order.dto.CustomerResponse;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +11,8 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Entity
 @Table(name = "order_items")
@@ -22,7 +25,6 @@ public class OrderItem {
     // ============================================================
     // ORDER ITEM ID
     // ============================================================
-    // Unique ID of this particular item inside an order.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_item_id")
@@ -32,26 +34,6 @@ public class OrderItem {
     // ============================================================
     // PARENT ORDER
     // ============================================================
-    // Every OrderItem belongs to one Order.
-    //
-    // LAZY:
-    // The Order object is loaded only when it is actually needed.
-    //
-    // JsonIgnore:
-    // We do NOT serialize the complete Order object.
-    //
-    // Why?
-    // Because Order also contains a List<OrderItem>.
-    //
-    // Without JsonIgnore, JSON could become:
-    //
-    // Order
-    //   → OrderItems
-    //       → Order
-    //           → OrderItems
-    //               → Order...
-    //
-    // That would create a recursive JSON structure.
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "order_id", nullable = false)
     @JsonIgnore
@@ -61,10 +43,6 @@ public class OrderItem {
     // ============================================================
     // PRODUCT ID
     // ============================================================
-    // Logical reference to Product Service.
-    //
-    // This is NOT a database foreign key because Product Service
-    // owns the product database separately.
     @Column(name = "product_id", nullable = false)
     private Long productId;
 
@@ -72,10 +50,6 @@ public class OrderItem {
     // ============================================================
     // SELLER ID
     // ============================================================
-    // Identifies which seller owns this product.
-    //
-    // This is important for the marketplace because one customer
-    // order can contain products from multiple sellers.
     @Column(name = "seller_id", nullable = false)
     private Long sellerId;
 
@@ -90,9 +64,6 @@ public class OrderItem {
     // ============================================================
     // UNIT PRICE
     // ============================================================
-    // Price of one unit at the time the order was created.
-    //
-    // We store this because product prices can change later.
     @Column(name = "unit_price", nullable = false, precision = 12, scale = 2)
     private BigDecimal unitPrice;
 
@@ -100,9 +71,32 @@ public class OrderItem {
     // ============================================================
     // SUBTOTAL
     // ============================================================
-    // quantity × unitPrice
     @Column(name = "subtotal", nullable = false, precision = 12, scale = 2)
     private BigDecimal subtotal;
+
+
+    // ============================================================
+    // CUSTOMER INFORMATION
+    // ============================================================
+    /*
+     * Customer information belongs to Auth Service.
+     *
+     * This field is NOT stored in the Order Service database.
+     *
+     * OrderItemService obtains this information through AuthClient
+     * and temporarily places it here so Jackson can include it
+     * in the Seller Orders API response.
+     *
+     * @Transient means:
+     *
+     *     - No database column is created.
+     *     - JPA does not persist this field.
+     *
+     * The data exists only for the API response.
+     */
+    @Transient
+    @JsonProperty("customer")
+    private CustomerResponse customer;
 
 
     // ============================================================
@@ -114,16 +108,12 @@ public class OrderItem {
     // IMPORTANT:
     // These are Java methods only.
     //
-    // They do NOT create new database columns.
-    //
-    // They simply add useful properties to the JSON response.
+    // They do NOT create database columns.
 
 
     // ------------------------------------------------------------
     // ORDER ID
     // ------------------------------------------------------------
-    // Allows the Seller Orders frontend to know which order
-    // contains this OrderItem.
     @JsonProperty("orderId")
     public Long getOrderId() {
 
@@ -136,8 +126,6 @@ public class OrderItem {
     // ------------------------------------------------------------
     // CUSTOMER ID
     // ------------------------------------------------------------
-    // Allows the seller side to identify the customer associated
-    // with this order.
     @JsonProperty("customerId")
     public Long getCustomerId() {
 
@@ -150,15 +138,6 @@ public class OrderItem {
     // ------------------------------------------------------------
     // ORDER STATUS
     // ------------------------------------------------------------
-    // Example:
-    // PENDING_PAYMENT
-    // CONFIRMED
-    // PROCESSING
-    // SHIPPED
-    // DELIVERED
-    //
-    // The Seller Orders page will use this to display the
-    // current order state.
     @JsonProperty("orderStatus")
     public String getOrderStatus() {
 
@@ -171,14 +150,6 @@ public class OrderItem {
     // ------------------------------------------------------------
     // PAYMENT STATUS
     // ------------------------------------------------------------
-    // Example:
-    // PENDING
-    // SUCCESS
-    // FAILED
-    // REFUNDED
-    //
-    // This lets the seller know the payment state associated
-    // with the order.
     @JsonProperty("paymentStatus")
     public String getPaymentStatus() {
 
@@ -191,12 +162,71 @@ public class OrderItem {
     // ------------------------------------------------------------
     // ORDER CREATED TIME
     // ------------------------------------------------------------
-    // Useful for displaying when the customer placed the order.
     @JsonProperty("createdAt")
     public LocalDateTime getCreatedAt() {
 
         return order != null
                 ? order.getCreatedAt()
                 : null;
+    }
+
+
+    // ============================================================
+    // DELIVERY ADDRESS
+    // ============================================================
+    /*
+     * Delivery address belongs to the specific Order.
+     *
+     * We expose only the information required by the seller.
+     *
+     * We intentionally do NOT expose:
+     *
+     *     customerId
+     *     isDefault
+     *     createdAt
+     *
+     * This is also a Java-only JSON property.
+     * It does NOT create database columns.
+     */
+    @JsonProperty("deliveryAddress")
+    public Map<String, String> getDeliveryAddress() {
+
+        if (order == null || order.getAddress() == null) {
+            return null;
+        }
+
+        Map<String, String> address = new LinkedHashMap<>();
+
+        address.put(
+                "addressLine1",
+                order.getAddress().getAddressLine1()
+        );
+
+        address.put(
+                "addressLine2",
+                order.getAddress().getAddressLine2()
+        );
+
+        address.put(
+                "city",
+                order.getAddress().getCity()
+        );
+
+        address.put(
+                "state",
+                order.getAddress().getState()
+        );
+
+        address.put(
+                "postalCode",
+                order.getAddress().getPostalCode()
+        );
+
+        address.put(
+                "country",
+                order.getAddress().getCountry()
+        );
+
+        return address;
     }
 }
