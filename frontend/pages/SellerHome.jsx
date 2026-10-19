@@ -490,7 +490,7 @@ function SellerHome() {
                       inventoryResponse.data,
                   }
 
-                } catch (inventoryError) {
+                } catch  {
 
                   // Keep product visible even if inventory
                   // does not exist.

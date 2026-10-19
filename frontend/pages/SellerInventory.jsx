@@ -102,7 +102,7 @@ function SellerInventory() {
               inventory: inventoryResponse.data,
             };
 
-          } catch (inventoryError) {
+          } catch {
 
             // If inventory does not exist yet,
             // keep the product visible instead of removing it.

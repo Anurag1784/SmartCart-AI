@@ -32,7 +32,7 @@
 //
 // ============================================================
 
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { Link } from 'react-router-dom'
 
@@ -321,11 +321,11 @@ function SellerOrders() {
   // HELPER — GET PRODUCT
   // ============================================================
 
-  const getProduct = (productId) => {
+ const getProduct = useCallback((productId) => {
 
-    return products[productId] || null
+  return products[productId] || null
 
-  }
+}, [products])
 
   // ============================================================
   // HELPER — PRODUCT NAME
@@ -689,7 +689,7 @@ function SellerOrders() {
     orderStatusFilter,
     paymentStatusFilter,
     dateFilter,
-    products,
+    getProduct,
   ])
 
   // ============================================================
@@ -1695,11 +1695,6 @@ function SellerOrders() {
                         </div>
 
                         {order.items.map((item) => {
-
-                          const product =
-                            getProduct(
-                              item.productId
-                            )
 
                           const imageUrl =
                             getProductImage(

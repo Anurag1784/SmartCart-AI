@@ -145,13 +145,13 @@ function ForgotPassword() {
       /*
        * Verify OTP with Auth Service.
        */
-      const response = await axios.post(
-        'http://localhost:8080/api/auth/verify-otp',
-        {
-          email: email,
-          otp: otp
-        }
-      )
+      await axios.post(
+             'http://localhost:8080/api/auth/verify-otp',
+             {
+                    email: email,
+                    otp: otp
+             }
+)
 
         /*
           * OTP verification was successful.
