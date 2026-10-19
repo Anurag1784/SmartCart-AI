@@ -1,7 +1,6 @@
 import axios from 'axios'
 
 const ADMIN_SERVICE_URL = 'http://localhost:5191'
-
 // =========================================================
 // GET ALL CATEGORIES
 // =========================================================

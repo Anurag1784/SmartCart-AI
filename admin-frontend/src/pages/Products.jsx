@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import {
   Search,
@@ -59,59 +59,58 @@ function Products() {
   // LOAD PRODUCTS
   // =========================================================
 
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
 
-    try {
+  try {
 
-      setLoading(true)
+    setLoading(true)
+    setError('')
 
-      setError('')
+    const data = await getProducts(token)
 
+    setProducts(
+      Array.isArray(data)
+        ? data
+        : []
+    )
 
-      const data = await getProducts(token)
+  } catch (err) {
 
+    console.error('Failed to load products:', err)
 
-      setProducts(
-        Array.isArray(data)
-          ? data
-          : []
-      )
+    setError(
+      err.response?.data?.message ||
+      err.response?.data ||
+      'Failed to load products.'
+    )
+  } finally {
 
-    } catch (err) {
+    setLoading(false)
 
-      console.error(
-        'Failed to load products:',
-        err
-      )
-
-
-      setError(
-        err.response?.data?.message ||
-        err.response?.data ||
-        'Failed to load products.'
-      )
-
-    } finally {
-
-      setLoading(false)
-
-    }
   }
-
+}, [token])
 
   // =========================================================
   // INITIAL LOAD
   // =========================================================
 
   useEffect(() => {
+  if (!token) {
+    return
+  }
 
-    if (token) {
+  let cancelled = false
 
+  Promise.resolve().then(() => {
+    if (!cancelled) {
       loadProducts()
-
     }
+  })
 
-  }, [token])
+  return () => {
+    cancelled = true
+  }
+}, [token, loadProducts])
 
 
   // =========================================================

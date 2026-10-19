@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import {
   Users,
@@ -42,47 +42,65 @@ function Dashboard() {
   // FETCH DASHBOARD DATA
   // =====================================================
 
-  const fetchDashboardStats = async () => {
+ const fetchDashboardStats = useCallback(async () => {
 
-    try {
+  try {
 
-      setLoading(true)
-      setError('')
+    setLoading(true)
+    setError('')
 
-      const data = await getDashboardStats()
+    const data = await getDashboardStats()
 
-      setStats(data)
+    setStats(data)
 
-    } catch (err) {
+  } catch (err) {
 
-      console.error(
-        'Failed to load dashboard statistics:',
-        err
-      )
+    console.error(
 
-      setError(
-        err.response?.data?.message ||
-        err.message ||
-        'Unable to load dashboard statistics.'
-      )
+      'Failed to load dashboard statistics:',
+      err
 
-    } finally {
+    )
 
-      setLoading(false)
+    setError(
 
-    }
+      err.response?.data?.message ||
+      err.message ||
+      'Unable to load dashboard statistics.'
+
+    )
+  } finally {
+
+    setLoading(false)
+
   }
+}, [])
 
 
   // =====================================================
   // LOAD DASHBOARD WHEN PAGE OPENS
   // =====================================================
 
-  useEffect(() => {
+ useEffect(() => {
 
-    fetchDashboardStats()
+  let cancelled = false
 
-  }, [])
+  Promise.resolve().then(() => {
+
+    if (!cancelled) {
+
+      fetchDashboardStats()
+
+    }
+  })
+
+  return () => {
+
+    cancelled = true
+
+  }
+
+}, [fetchDashboardStats])
 
 
   // =====================================================

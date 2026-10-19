@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import {  useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import {
@@ -44,81 +44,77 @@ function Inventory() {
   // LOAD INVENTORY DATA
   // =========================================================
 
-  const loadInventory = async (isRefresh = false) => {
-    if (!token) {
-      setError(
-        'Admin authentication token is missing.'
-      )
+  const loadInventory = useCallback(async (isRefresh = false) => {
 
-      setLoading(false)
-
-      return
-    }
-
-    try {
-      if (isRefresh) {
-        setRefreshing(true)
-      } else {
-        setLoading(true)
-      }
-
-      setError('')
-
-      const [
-        inventoryResponse,
-        lowStockResponse,
-      ] = await Promise.all([
-        getInventory(token),
-        getLowStockInventory(token),
-      ])
-
-      setInventory(
-        Array.isArray(inventoryResponse)
-          ? inventoryResponse
-          : []
-      )
-
-      setLowStockInventory(
-        Array.isArray(lowStockResponse)
-          ? lowStockResponse
-          : []
-      )
-
-    } catch (err) {
-      console.error(
-        'Failed to load inventory:',
-        err
-      )
-
-      if (err.response?.status === 401) {
-        setError(
-          'Your session has expired. Please login again.'
-        )
-      } else if (err.response?.status === 403) {
-        setError(
-          'You are not authorized to view inventory.'
-        )
-      } else {
-        setError(
-          'Unable to load inventory. Please try again.'
-        )
-      }
-
-    } finally {
-      setLoading(false)
-      setRefreshing(false)
-    }
+  if (!token) {
+    setError('Admin authentication token is missing.')
+    setLoading(false)
+    setRefreshing(false)
+    return
   }
 
+  try {
+
+    if (isRefresh) {
+      setRefreshing(true)
+    } else {
+      setLoading(true)
+    }
+
+    setError('')
+
+    const [
+      inventoryResponse,
+      lowStockResponse,
+    ] = await Promise.all([
+      getInventory(token),
+      getLowStockInventory(token),
+    ])
+
+    setInventory(
+      Array.isArray(inventoryResponse)
+        ? inventoryResponse
+        : []
+    )
+
+    setLowStockInventory(
+      Array.isArray(lowStockResponse)
+        ? lowStockResponse
+        : []
+    )
+  } catch (err) {
+    console.error('Failed to load inventory:', err)
+
+    if (err.response?.status === 401) {
+      setError('Your session has expired. Please login again.')
+    } else if (err.response?.status === 403) {
+      setError('You are not authorized to view inventory.')
+    } else {
+      setError('Unable to load inventory. Please try again.')
+    }
+  } finally {
+    setLoading(false)
+    setRefreshing(false)
+  }
+}, [token])
 
   // =========================================================
   // INITIAL LOAD
   // =========================================================
 
   useEffect(() => {
-    loadInventory()
-  }, [token])
+  let cancelled = false
 
+  Promise.resolve().then(() => {
+    if (!cancelled) {
+      loadInventory()
+    }
+  })
+
+  return () => {
+    cancelled = true
+  }
+}, [loadInventory])
 
   // =========================================================
   // LOW STOCK IDS

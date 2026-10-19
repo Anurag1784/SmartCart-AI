@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import {
   Search,
@@ -16,7 +16,6 @@ import {
   ShieldCheck,
   Settings,
   X,
-  Check,
   BellOff,
   CheckCheck,
   Loader2,
@@ -27,7 +26,7 @@ import {
   useNavigate,
 } from 'react-router-dom'
 
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 import {
   getUnreadNotifications,
@@ -183,7 +182,7 @@ function AdminTopbar() {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const dispatch = useDispatch()
+
 
   // ----------------------------------------------------------
   // AUTHENTICATED ADMIN DATA
@@ -238,7 +237,7 @@ function AdminTopbar() {
   // LOAD UNREAD NOTIFICATIONS
   // ==========================================================
 
-  const loadUnreadNotifications = async () => {
+  const loadUnreadNotifications = useCallback(async () => {
 
     if (
       !isAuthenticated ||
@@ -279,7 +278,7 @@ function AdminTopbar() {
       setIsNotificationsLoading(false)
 
     }
-  }
+  }, [isAuthenticated, token, user])
 
 
   // ==========================================================
@@ -287,15 +286,18 @@ function AdminTopbar() {
   // ==========================================================
 
   useEffect(() => {
+  let cancelled = false
 
-    loadUnreadNotifications()
+  Promise.resolve().then(() => {
+    if (!cancelled) {
+      loadUnreadNotifications()
+    }
+  })
 
-  }, [
-    isAuthenticated,
-    token,
-    user?.userId,
-  ])
-
+  return () => {
+    cancelled = true
+  }
+}, [loadUnreadNotifications])
 
   // ==========================================================
   // KEYBOARD SHORTCUTS
@@ -346,16 +348,6 @@ function AdminTopbar() {
   // ==========================================================
   // RESET SEARCH WHEN CLOSED
   // ==========================================================
-
-  useEffect(() => {
-
-    if (!isSearchOpen) {
-
-      setSearchTerm('')
-
-    }
-
-  }, [isSearchOpen])
 
 
   // ==========================================================
@@ -443,6 +435,8 @@ function AdminTopbar() {
   const closeSearch = () => {
 
     setIsSearchOpen(false)
+
+    setSearchTerm('')
 
   }
 

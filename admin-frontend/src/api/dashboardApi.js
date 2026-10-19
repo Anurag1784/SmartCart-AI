@@ -32,12 +32,14 @@ const getAdminToken = () => {
 
     return auth.token
   } catch (error) {
-    if (error.message === 'Admin authentication token was not found.') {
-      throw error
-    }
-
-    throw new Error('Invalid Admin authentication data.')
+  if (error.message === 'Admin authentication token was not found.') {
+    throw error
   }
+
+  throw new Error('Invalid Admin authentication data.', {
+    cause: error,
+  })
+}
 }
 
 // ------------------------------------------------------------

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import {
   Search,
@@ -44,46 +44,59 @@ function Users() {
   // LOAD USERS
   // =========================================================
 
-  const loadUsers = async () => {
-    if (!token) {
-      setError('Admin authentication token is missing.')
-      setLoading(false)
-      return
-    }
+  const loadUsers = useCallback(async () => {
 
-    try {
-      setLoading(true)
-      setError('')
+  if (!token) {
 
-      const [customers, sellers, admins] = await Promise.all([
-        getUsersByRole('CUSTOMER', token),
-        getUsersByRole('SELLER', token),
-        getUsersByRole('ADMIN', token),
-      ])
+    setError('Admin authentication token is missing.')
+    setLoading(false)
+    return
 
-      setUsers([
-        ...customers,
-        ...sellers,
-        ...admins,
-      ])
-    } catch (err) {
-      console.error('Failed to load users:', err)
-
-      if (err.response?.status === 401) {
-        setError('Your session has expired. Please login again.')
-      } else if (err.response?.status === 403) {
-        setError('You are not authorized to view users.')
-      } else {
-        setError('Unable to load users. Please try again.')
-      }
-    } finally {
-      setLoading(false)
-    }
   }
 
+  try {
+    setLoading(true)
+    setError('')
+
+    const [customers, sellers, admins] = await Promise.all([
+      getUsersByRole('CUSTOMER', token),
+      getUsersByRole('SELLER', token),
+      getUsersByRole('ADMIN', token),
+    ])
+
+    setUsers([
+      ...customers,
+      ...sellers,
+      ...admins,
+    ])
+  } catch (err) {
+    console.error('Failed to load users:', err)
+
+    if (err.response?.status === 401) {
+      setError('Your session has expired. Please login again.')
+    } else if (err.response?.status === 403) {
+      setError('You are not authorized to view users.')
+    } else {
+      setError('Unable to load users. Please try again.')
+    }
+  } finally {
+    setLoading(false)
+  }
+}, [token])
+
   useEffect(() => {
-    loadUsers()
-  }, [token])
+  let cancelled = false
+
+  Promise.resolve().then(() => {
+    if (!cancelled) {
+      loadUsers()
+    }
+  })
+
+  return () => {
+    cancelled = true
+  }
+}, [loadUsers])
 
   // =========================================================
   // FILTER USERS

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Activity,
   RefreshCw,
@@ -29,37 +29,50 @@ function AuditLogs() {
   const [resourceFilter, setResourceFilter] = useState('ALL')
   const [resultFilter, setResultFilter] = useState('ALL')
 
-  const loadAuditLogs = async (showRefreshState = false) => {
-    try {
-      if (showRefreshState) {
-        setRefreshing(true)
-      } else {
-        setLoading(true)
-      }
 
-      setErrorMessage('')
-
-      const data = await getAuditLogs(token)
-
-      setAuditLogs(Array.isArray(data) ? data : [])
-    } catch (error) {
-      console.error('Failed to load audit logs:', error)
-
-      setErrorMessage(
-        error.response?.data?.message ||
-        'Failed to load audit logs. Please try again.'
-      )
-    } finally {
-      setLoading(false)
-      setRefreshing(false)
+  const loadAuditLogs = useCallback(async (showRefreshState = false) => {
+  try {
+    if (showRefreshState) {
+      setRefreshing(true)
+    } else {
+      setLoading(true)
     }
+
+    setErrorMessage('')
+
+    const data = await getAuditLogs(token)
+
+    setAuditLogs(Array.isArray(data) ? data : [])
+  } catch (error) {
+    console.error('Failed to load audit logs:', error)
+
+    setErrorMessage(
+      error.response?.data?.message ||
+      'Failed to load audit logs. Please try again.'
+    )
+  } finally {
+    setLoading(false)
+    setRefreshing(false)
+  }
+}, [token])
+
+ useEffect(() => {
+  if (!token) {
+    return
   }
 
-  useEffect(() => {
-    if (token) {
+  let cancelled = false
+
+  Promise.resolve().then(() => {
+    if (!cancelled) {
       loadAuditLogs()
     }
-  }, [token])
+  })
+
+  return () => {
+    cancelled = true
+  }
+}, [token, loadAuditLogs])
 
   const actionOptions = useMemo(() => {
     return [

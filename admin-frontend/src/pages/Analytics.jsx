@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   AlertTriangle,
   BarChart3,
@@ -39,37 +39,52 @@ function Analytics() {
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState('')
 
-  const loadAnalytics = async (isRefresh = false) => {
-    try {
-      if (isRefresh) {
-        setRefreshing(true)
-      } else {
-        setLoading(true)
-      }
+  const loadAnalytics = useCallback(async (isRefresh = false) => {
+  try {
+    if (isRefresh) {
 
-      setError('')
+      setRefreshing(true)
+    } else {
+      setLoading(true)
 
-      const data = await getAnalytics(token)
-
-      setAnalytics(data)
-    } catch (err) {
-      console.error('Failed to load analytics:', err)
-
-      setError(
-        err.response?.data?.message ||
-        'Failed to load analytics data.'
-      )
-    } finally {
-      setLoading(false)
-      setRefreshing(false)
     }
+
+    setError('')
+
+    const data = await getAnalytics(token)
+
+    setAnalytics(data)
+  } catch (err) {
+
+    console.error('Failed to load analytics:', err)
+
+    setError(
+      err.response?.data?.message ||
+      'Failed to load analytics data.'
+    )
+  } finally {
+    setLoading(false)
+    setRefreshing(false)
+  }
+}, [token])
+
+ useEffect(() => {
+  if (!token) {
+    return
   }
 
-  useEffect(() => {
-    if (token) {
+  let cancelled = false
+
+  Promise.resolve().then(() => {
+    if (!cancelled) {
       loadAnalytics()
     }
-  }, [token])
+  })
+
+  return () => {
+    cancelled = true
+  }
+}, [token, loadAnalytics])
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('en-IN', {

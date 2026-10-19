@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { useSelector } from 'react-redux'
 
@@ -57,72 +57,82 @@ function Orders() {
   // LOAD ORDERS
   // =========================================================
 
-  const loadOrders = async (isRefresh = false) => {
-    if (!token) {
-      setError('Admin authentication token is missing.')
-      setLoading(false)
-      return
-    }
+  const loadOrders = useCallback(async (isRefresh = false) => {
 
-    try {
-      if (isRefresh) {
-        setRefreshing(true)
-      } else {
-        setLoading(true)
-      }
+  if (!token) {
 
-      setError('')
+    setError('Admin authentication token is missing.')
+    setLoading(false)
+    setRefreshing(false)
+    return
 
-      const [countResponse, ordersResponse] =
-        await Promise.all([
-          getOrderCount(token),
-          getOrders(token),
-        ])
-
-      setTotalOrders(
-        countResponse?.totalOrders ??
-        countResponse ??
-        0
-      )
-
-      setOrders(
-        Array.isArray(ordersResponse)
-          ? ordersResponse
-          : []
-      )
-
-    } catch (err) {
-      console.error('Failed to load orders:', err)
-
-      if (err.response?.status === 401) {
-        setError(
-          'Your session has expired. Please login again.'
-        )
-      } else if (err.response?.status === 403) {
-        setError(
-          'You are not authorized to view orders.'
-        )
-      } else {
-        setError(
-          'Unable to load orders. Please try again.'
-        )
-      }
-
-    } finally {
-      setLoading(false)
-      setRefreshing(false)
-    }
   }
 
+  try {
+
+    if (isRefresh) {
+      setRefreshing(true)
+    } else {
+      setLoading(true)
+    }
+
+    setError('')
+
+    const [countResponse, ordersResponse] =
+      await Promise.all([
+        getOrderCount(token),
+        getOrders(token),
+      ])
+
+    setTotalOrders(
+      countResponse?.totalOrders ??
+      countResponse ??
+      0
+    )
+
+    setOrders(
+      Array.isArray(ordersResponse)
+        ? ordersResponse
+        : []
+    )
+  } catch (err) {
+
+    console.error('Failed to load orders:', err)
+
+    if (err.response?.status === 401) {
+      setError('Your session has expired. Please login again.')
+    } else if (err.response?.status === 403) {
+      setError('You are not authorized to view orders.')
+    } else {
+      setError('Unable to load orders. Please try again.')
+    }
+  } finally {
+
+    setLoading(false)
+    setRefreshing(false)
+
+  }
+}, [token])
 
   // =========================================================
   // INITIAL LOAD
   // =========================================================
 
-  useEffect(() => {
-    loadOrders()
-  }, [token])
+useEffect(() => {
 
+  let cancelled = false
+
+  Promise.resolve().then(() => {
+
+    if (!cancelled) {
+      loadOrders()
+    }
+  })
+
+  return () => {
+    cancelled = true
+  }
+}, [loadOrders])
 
   // =========================================================
   // FILTER ORDERS

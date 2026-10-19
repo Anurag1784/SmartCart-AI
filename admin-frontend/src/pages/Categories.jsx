@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import {
   Plus,
@@ -101,59 +101,64 @@ function Categories() {
   // Load Categories
   // =========================================================
 
-  const loadCategories = async () => {
+ const loadCategories = useCallback(async () => {
+  try {
 
-    try {
+    setLoading(true)
 
-      setLoading(true)
+    setError('')
 
-      setError('')
+    const data = await getCategories(token)
 
+    setCategories(
 
-      const data = await getCategories(token)
+      Array.isArray(data)
+        ? data
+        : []
 
+    )
+  } catch (err) {
 
-      setCategories(
-        Array.isArray(data)
-          ? data
-          : []
-      )
+    console.error('Failed to load categories:', err)
 
-    } catch (err) {
+    setError(
 
-      console.error(
-        'Failed to load categories:',
-        err
-      )
+      err.response?.data?.message ||
+      err.response?.data ||
+      'Failed to load categories.'
 
+    )
+  } finally {
 
-      setError(
-        err.response?.data?.message ||
-        err.response?.data ||
-        'Failed to load categories.'
-      )
+    setLoading(false)
 
-    } finally {
-
-      setLoading(false)
-
-    }
   }
-
+}, [token])
 
   // =========================================================
   // Initial Load
   // =========================================================
 
-  useEffect(() => {
+ useEffect(() => {
 
-    if (token) {
+  if (!token) {
 
+    return
+
+  }
+
+  let cancelled = false
+
+  Promise.resolve().then(() => {
+    if (!cancelled) {
       loadCategories()
-
     }
+  })
 
-  }, [token])
+  return () => {
+    cancelled = true
+  }
+}, [token, loadCategories])
 
 
   // =========================================================

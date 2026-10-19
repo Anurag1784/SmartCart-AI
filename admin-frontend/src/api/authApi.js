@@ -5,7 +5,7 @@ import axios from 'axios'
 // ------------------------------------------------------------
 // The existing SmartCart Auth Service runs on port 8080.
 // ------------------------------------------------------------
-const AUTH_SERVICE_URL = 'http://localhost:8080'
+const AUTH_SERVICE_URL = 'http://localhost:8086'
 
 // ------------------------------------------------------------
 // Admin Login

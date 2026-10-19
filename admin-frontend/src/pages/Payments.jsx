@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import {  useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import {
@@ -10,7 +10,6 @@ import {
   ShoppingCart,
   UserRound,
   IndianRupee,
-  CalendarDays,
   Hash,
   Receipt,
   AlertCircle,
@@ -69,89 +68,93 @@ function Payments() {
   // LOAD PAYMENT DATA
   // =========================================================
 
-  const loadPayments = async (isRefresh = false) => {
-    if (!token) {
-      setError(
-        'Admin authentication token is missing.'
-      )
+  const loadPayments = useCallback(async (isRefresh = false) => {
 
-      setLoading(false)
+  if (!token) {
 
-      return
-    }
+    setError('Admin authentication token is missing.')
+    setLoading(false)
+    return
 
-    try {
-      if (isRefresh) {
-        setRefreshing(true)
-      } else {
-        setLoading(true)
-      }
-
-      setError('')
-
-      const [
-        countResponse,
-        revenueResponse,
-        paymentsResponse,
-      ] = await Promise.all([
-        getPaymentCount(token),
-        getTotalRevenue(token),
-        getPayments(token),
-      ])
-
-      setSuccessfulPayments(
-        countResponse?.totalSuccessfulPayments ??
-        countResponse ??
-        0
-      )
-
-      setTotalRevenue(
-        revenueResponse?.totalRevenue ??
-        revenueResponse ??
-        0
-      )
-
-      setPayments(
-        Array.isArray(paymentsResponse)
-          ? paymentsResponse
-          : []
-      )
-
-    } catch (err) {
-      console.error(
-        'Failed to load payments:',
-        err
-      )
-
-      if (err.response?.status === 401) {
-        setError(
-          'Your session has expired. Please login again.'
-        )
-      } else if (err.response?.status === 403) {
-        setError(
-          'You are not authorized to view payments.'
-        )
-      } else {
-        setError(
-          'Unable to load payments. Please try again.'
-        )
-      }
-
-    } finally {
-      setLoading(false)
-      setRefreshing(false)
-    }
   }
+
+  try {
+
+    if (isRefresh) {
+      setRefreshing(true)
+    } else {
+      setLoading(true)
+
+    }
+
+    setError('')
+
+    const [
+      countResponse,
+      revenueResponse,
+      paymentsResponse,
+    ] = await Promise.all([
+      getPaymentCount(token),
+      getTotalRevenue(token),
+      getPayments(token),
+    ])
+
+    setSuccessfulPayments(
+      countResponse?.totalSuccessfulPayments ??
+      countResponse ??
+      0
+    )
+
+    setTotalRevenue(
+      revenueResponse?.totalRevenue ??
+      revenueResponse ??
+      0
+    )
+
+    setPayments(
+      Array.isArray(paymentsResponse)
+        ? paymentsResponse
+        : []
+    )
+  } catch (err) {
+
+    console.error('Failed to load payments:', err)
+
+    if (err.response?.status === 401) {
+      setError('Your session has expired. Please login again.')
+    } else if (err.response?.status === 403) {
+      setError('You are not authorized to view payments.')
+    } else {
+      setError('Unable to load payments. Please try again.')
+    }
+  } finally {
+
+    setLoading(false)
+    setRefreshing(false)
+
+  }
+}, [token])
 
 
   // =========================================================
   // INITIAL LOAD
   // =========================================================
 
-  useEffect(() => {
-    loadPayments()
-  }, [token])
+ useEffect(() => {
 
+  let cancelled = false
+
+  Promise.resolve().then(() => {
+
+    if (!cancelled) {
+      loadPayments()
+    }
+  })
+
+  return () => {
+    cancelled = true
+  }
+}, [loadPayments])
 
   // =========================================================
   // FILTER PAYMENTS

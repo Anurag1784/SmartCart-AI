@@ -5,7 +5,7 @@ import axios from 'axios'
 // ------------------------------------------------------------
 // Existing SmartCart Notification Service runs on port 8085.
 // ------------------------------------------------------------
-const NOTIFICATION_SERVICE_URL = 'http://localhost:8085'
+const NOTIFICATION_SERVICE_URL = 'http://localhost:8091'
 
 // ------------------------------------------------------------
 // Get unread notifications for the logged-in Admin
