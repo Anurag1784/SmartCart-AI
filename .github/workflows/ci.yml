@@ -214,3 +214,77 @@ jobs:
           PRODUCT_SERVICE_URL: http://localhost:8081
           ORDER_SERVICE_URL: http://localhost:8083
         run: python -m pytest tests -v
+
+
+
+  # =====================================================
+  # PUBLISH DOCKER IMAGES TO GITHUB CONTAINER REGISTRY
+  # =====================================================
+  publish-images:
+    name: Publish ${{ matrix.image }}
+    runs-on: ubuntu-latest
+
+    needs:
+      - java-services
+      - admin-service
+      - customer-seller-frontend
+      - admin-frontend
+      - ai-service
+
+    # Publish only from main, never from pull requests.
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: smartcart-auth-service
+            context: ./backend/auth-service
+          - image: smartcart-product-service
+            context: ./backend/product-service
+          - image: smartcart-inventory-service
+            context: ./backend/inventory-service
+          - image: smartcart-order-service
+            context: ./backend/order-service
+          - image: smartcart-payment-service
+            context: ./backend/payment-service
+          - image: smartcart-notification-service
+            context: ./backend/notification-service
+          - image: smartcart-admin-service
+            context: ./admin-service
+          - image: smartcart-ai-service
+            context: ./ai-service
+          - image: smartcart-frontend
+            context: ./frontend
+          - image: smartcart-admin-frontend
+            context: ./admin-frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.context }}/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/anurag1784/${{ matrix.image }}:${{ github.sha }}
+            ghcr.io/anurag1784/${{ matrix.image }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
