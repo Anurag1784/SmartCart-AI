@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 
 import com.smartcart.product.jwt.JwtAuthenticationFilter;
 
@@ -29,6 +31,19 @@ public class SecurityConfig {
 
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
+    
+    @Bean
+    public FilterRegistrationBean<JwtAuthenticationFilter>
+    jwtAuthenticationFilterRegistration() {
+
+        FilterRegistrationBean<JwtAuthenticationFilter> registration =
+                new FilterRegistrationBean<>();
+
+        registration.setFilter(jwtAuthenticationFilter);
+        registration.setEnabled(false);
+
+        return registration;
+    }
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -40,6 +55,21 @@ public class SecurityConfig {
             );
         };
     }
+
+    // =========================================================
+    // PUBLIC PRODUCT IMAGE SECURITY
+    // =========================================================
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+
+        return web -> web.ignoring()
+                .requestMatchers("/uploads/**");
+    }
+
+    // =========================================================
+    // MAIN SECURITY FILTER CHAIN
+    // =========================================================
 
     @Bean
     public SecurityFilterChain securityFilterChain(
