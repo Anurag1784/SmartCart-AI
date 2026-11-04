@@ -60,7 +60,12 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(
                 List.of(
                         "http://localhost:5173",
-                        "http://localhost:5174"
+                        "http://localhost:5174",
+                        "http://localhost:5175",
+                        "http://localhost:5176",
+                        "http://localhost:5275",
+                        "http://localhost:5276",
+                        "https://smartcart-customer-seller.vercel.app"
                 )
         );
 
@@ -88,6 +93,8 @@ public class SecurityConfig {
 
         return source;
     }
+    
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -118,6 +125,11 @@ public class SecurityConfig {
                         HttpMethod.OPTIONS,
                         "/**"
                 ).permitAll()
+                
+                
+                // Allow Docker health checks without authentication
+                .requestMatchers("/actuator/health").permitAll()
+
 
                 // Public authentication endpoints
                 .requestMatchers(
