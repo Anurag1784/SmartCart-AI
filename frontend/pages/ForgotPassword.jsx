@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../services/api'
 
 function ForgotPassword() {
 
@@ -77,8 +77,8 @@ function ForgotPassword() {
       /*
        * Call backend to generate and send OTP.
        */
-      const response = await axios.post(
-        'http://localhost:8080/api/auth/forgot-password',
+      const response = await api.post(
+        '/api/auth/forgot-password',
         {
           email: email
         }
@@ -145,8 +145,8 @@ function ForgotPassword() {
       /*
        * Verify OTP with Auth Service.
        */
-      await axios.post(
-             'http://localhost:8080/api/auth/verify-otp',
+      await api.post(
+              '/api/auth/verify-otp',
              {
                     email: email,
                     otp: otp
@@ -230,8 +230,8 @@ function ForgotPassword() {
        * - reset request is still valid
        * - reset request has not already been used
        */
-      const response = await axios.post(
-        'http://localhost:8080/api/auth/reset-password',
+      const response = await api.post(
+        '/api/auth/reset-password',
         {
           email: email,
           newPassword: newPassword

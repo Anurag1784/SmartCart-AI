@@ -136,8 +136,8 @@ import './SellerHome.css'
 
 const notificationApi = axios.create({
   baseURL:
-    import.meta.env.VITE_NOTIFICATION_SERVICE_URL ||
-    'http://localhost:8085',
+    import.meta.env.VITE_NOTIFICATION_SERVICE_URL ??
+    '',
 })
 
 

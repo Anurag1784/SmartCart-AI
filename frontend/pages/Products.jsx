@@ -8,6 +8,7 @@ import './Products.css'
 
 import { productApi, orderApi } from '../services/api'
 
+import getImageUrl from '../utils/imageUrl';
 
 function Products() {
 
@@ -845,7 +846,7 @@ function Products() {
                         {product.imageUrl ? (
 
                           <img
-                            src={product.imageUrl}
+                            src={getImageUrl(product.imageUrl)}
                             alt={product.productName}
                             className="product-image"
                           />

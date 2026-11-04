@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 
+import getImageUrl from '../utils/imageUrl';
+
 
 
 import {
@@ -884,7 +886,7 @@ function ProductDetails() {
               {product.imageUrl ? (
 
                 <img
-                  src={product.imageUrl}
+                  src={getImageUrl(product.imageUrl)}
                   alt={product.productName}
                   className="product-details-image"
                 />

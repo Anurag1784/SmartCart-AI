@@ -1,5 +1,16 @@
 import axios from 'axios'
 
+const isDocker = import.meta.env.VITE_DOCKER === 'true'
+
+const API_URLS = {
+   auth: import.meta.env.VITE_AUTH_API_URL || (isDocker ? '' : 'http://localhost:8080'),
+  product: import.meta.env.VITE_PRODUCT_API_URL || (isDocker ? '' : 'http://localhost:8081'),
+  inventory: import.meta.env.VITE_INVENTORY_API_URL || (isDocker ? '' : 'http://localhost:8082'),
+  order: import.meta.env.VITE_ORDER_API_URL || (isDocker ? '' : 'http://localhost:8083'),
+  payment: import.meta.env.VITE_PAYMENT_API_URL || (isDocker ? '' : 'http://localhost:8084'),
+  ai: import.meta.env.VITE_AI_API_URL || (isDocker ? '' : 'http://localhost:8000'),
+}
+
 
 // ============================================================
 // AUTH SERVICE AXIOS INSTANCE
@@ -7,7 +18,8 @@ import axios from 'axios'
 
 // Auth Service is running on port 8080
 const api = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: API_URLS.auth,
+
 
   // Tell the backend that we are sending JSON data
   headers: {
@@ -22,7 +34,7 @@ const api = axios.create({
 
 // Product Service is running on port 8081
 const productApi = axios.create({
-  baseURL: 'http://localhost:8081',
+  baseURL: API_URLS.product,
 
   // Tell the backend that we are sending JSON data
   headers: {
@@ -39,7 +51,7 @@ const productApi = axios.create({
 //
 // Seller inventory operations will use this Axios instance.
 const inventoryApi = axios.create({
-  baseURL: 'http://localhost:8082',
+  baseURL: API_URLS.inventory,
 
   // Tell the backend that we are sending JSON data
   headers: {
@@ -56,7 +68,7 @@ const inventoryApi = axios.create({
 //
 // Cart and Order APIs will use this Axios instance.
 const orderApi = axios.create({
-  baseURL: 'http://localhost:8083',
+  baseURL: API_URLS.order,
 
   // Tell the backend that we are sending JSON data
   headers: {
@@ -73,7 +85,7 @@ const orderApi = axios.create({
 //
 // Razorpay payment-related APIs will use this Axios instance.
 const paymentApi = axios.create({
-  baseURL: 'http://localhost:8084',
+  baseURL: API_URLS.payment,
 
   // Tell the backend that we are sending JSON data
   headers: {
@@ -90,7 +102,7 @@ const paymentApi = axios.create({
 //
 // AI recommendation APIs will use this Axios instance.
 const aiApi = axios.create({
-  baseURL: 'http://localhost:8000',
+  baseURL: API_URLS.ai,
 
   // Tell the AI Service that we are sending JSON data.
   headers: {
