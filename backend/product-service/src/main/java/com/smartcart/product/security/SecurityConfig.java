@@ -1,3 +1,4 @@
+
 package com.smartcart.product.security;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class SecurityConfig {
 
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
-    
+
     @Bean
     public FilterRegistrationBean<JwtAuthenticationFilter>
     jwtAuthenticationFilterRegistration() {
@@ -94,6 +95,9 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(auth -> auth
 
+                // Allow public health check
+                .requestMatchers("/actuator/health").permitAll()
+
                 // =================================================
                 // CORS PREFLIGHT REQUEST
                 // =================================================
@@ -104,37 +108,36 @@ public class SecurityConfig {
                     HttpMethod.OPTIONS,
                     "/**"
                 ).permitAll()
-                
-             // =================================================
-             // ADMIN CATEGORY MANAGEMENT
-             // =================================================
 
-             /*
-              * Only ADMIN users are allowed to create,
-              * update, or delete categories.
-              *
-              * SELLER and CUSTOMER users can only view
-              * categories through the public GET endpoints below.
-              */
+                // =================================================
+                // ADMIN CATEGORY MANAGEMENT
+                // =================================================
 
-             // Create category
-             .requestMatchers(
-                 HttpMethod.POST,
-                 "/api/categories"
-             ).hasRole("ADMIN")
+                /*
+                 * Only ADMIN users are allowed to create,
+                 * update, or delete categories.
+                 *
+                 * SELLER and CUSTOMER users can only view
+                 * categories through the public GET endpoints below.
+                 */
 
-             // Update category
-             .requestMatchers(
-                 HttpMethod.PUT,
-                 "/api/categories/**"
-             ).hasRole("ADMIN")
+                // Create category
+                .requestMatchers(
+                    HttpMethod.POST,
+                    "/api/categories"
+                ).hasRole("ADMIN")
 
-             // Delete category
-             .requestMatchers(
-                 HttpMethod.DELETE,
-                 "/api/categories/**"
-             ).hasRole("ADMIN")
+                // Update category
+                .requestMatchers(
+                    HttpMethod.PUT,
+                    "/api/categories/**"
+                ).hasRole("ADMIN")
 
+                // Delete category
+                .requestMatchers(
+                    HttpMethod.DELETE,
+                    "/api/categories/**"
+                ).hasRole("ADMIN")
 
                 // =================================================
                 // PUBLIC PRODUCT APIs
@@ -150,7 +153,6 @@ public class SecurityConfig {
                     "/api/categories/**"
                 ).permitAll()
 
-
                 // =================================================
                 // PUBLIC PRODUCT IMAGES
                 // =================================================
@@ -165,12 +167,10 @@ public class SecurityConfig {
                  *
                  * Customers should be able to see product images
                  * without sending a JWT.
+                 *
+                 * The WebSecurityCustomizer above excludes
+                 * /uploads/** from the Spring Security filter chain.
                  */
-                .requestMatchers(
-                    HttpMethod.GET,
-                    "/uploads/**"
-                ).permitAll()
-
 
                 // =================================================
                 // EVERYTHING ELSE
@@ -199,6 +199,10 @@ public class SecurityConfig {
         return http.build();
     }
 
+    // =========================================================
+    // CORS CONFIGURATION
+    // =========================================================
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
@@ -206,6 +210,7 @@ public class SecurityConfig {
                 new CorsConfiguration();
 
         // Allow our SmartCart React frontend.
+        // Local development and deployed Customer/Seller frontend.
         configuration.setAllowedOrigins(
                 List.of(
                     "http://localhost:5173",

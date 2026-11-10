@@ -44,10 +44,13 @@ public class SecurityConfig {
 
                 // Every Payment Service endpoint requires authentication.
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                org.springframework.http.HttpMethod.OPTIONS,
+                                "/**"
+                        ).permitAll()
                         .anyRequest()
                         .authenticated()
                 )
-
                 // Run our JWT filter before Spring's username/password filter.
                 .addFilterBefore(
                         jwtAuthenticationFilter,
@@ -66,7 +69,10 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(
                 Arrays.asList(
                         "http://localhost:5173",
-                        "http://localhost:5174"
+                        "http://localhost:5174",
+                        "http://localhost:5175",
+                        "http://localhost:5275",
+                        "https://smartcart-customer-seller.vercel.app"
                 )
         );
 
